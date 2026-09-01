@@ -11,9 +11,12 @@ from finrl.domain.quote import Quote
 
 def load_scenario(path: str | Path) -> dict:
     path = Path(path)
-
     with path.open("r", encoding="utf-8") as file:
-        return json.load(file)
+        scenario = json.load(file)
+
+    validate_scenario(scenario)
+
+    return scenario
 
 
 def load_order(data: dict, security: str) -> Order:
