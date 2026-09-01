@@ -1,7 +1,6 @@
 from decimal import Decimal
 from pathlib import Path
 
-from finrl.domain.market import MarketState
 from finrl.evals.order_evaluator import evaluate_order
 from finrl.scenarios import (
     load_executions,
@@ -26,13 +25,8 @@ def test_basic_limit_order_scenario_evaluation():
         scenario["order"],
         scenario["security"],
     )
-    quotes = load_quotes(scenario["quotes"])
+    market = load_market(scenario)
     executions = load_executions(scenario["executions"])
-
-    market = MarketState(
-        security=scenario["security"],
-        quotes=quotes,
-    )
 
     report = evaluate_order(
         order=order,
