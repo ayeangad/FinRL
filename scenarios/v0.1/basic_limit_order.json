@@ -1,0 +1,39 @@
+{
+  "scenario_id": "basic_limit_order_001",
+  "version": "v0.1",
+  "security": "FINRL",
+  "order": {
+    "order_id": "ORD-0001",
+    "side": "buy",
+    "order_type": "limit",
+    "quantity": "100",
+    "limit_price": "100.10",
+    "received_at": "2026-09-01T10:30:00.100"
+  },
+  "quotes": [
+    {
+      "security": "FINRL",
+      "bid_price": "99.90",
+      "bid_size": "500",
+      "ask_price": "100.10",
+      "ask_size": "300",
+      "timestamp": "2026-09-01T10:30:00.100"
+    }
+  ],
+  "executions": [
+    {
+      "execution_id": "EXE-0001",
+      "order_id": "ORD-0001",
+      "price": "100.00",
+      "quantity": "100",
+      "executed_at": "2026-09-01T10:30:00.200"
+    }
+  ],
+  "expected": {
+    "executed_quantity": "100",
+    "average_execution_price": "100.00",
+    "quoted_spread": "0.20",
+    "price_improvement": "0.10",
+    "effective_spread": "0.00"
+  }
+}
