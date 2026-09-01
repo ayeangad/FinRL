@@ -5,6 +5,7 @@ from finrl.domain.market import MarketState
 from finrl.evals.order_evaluator import evaluate_order
 from finrl.scenarios import (
     load_executions,
+    load_market,
     load_order,
     load_quotes,
     load_scenario,
@@ -50,3 +51,11 @@ def test_basic_limit_order_scenario_evaluation():
     assert report.price_improvement == Decimal(expected["price_improvement"])
     assert report.effective_spread == Decimal(expected["effective_spread"])
 
+def test_load_market():
+    scenario = load_scenario(SCENARIO_PATH)
+    market = load_market(scenario)
+
+    assert market.security == "FINRL"
+    assert len(market.quotes) == 1
+    assert market.quotes[0].bid_price == Decimal("99.90")
+    assert market.quotes[0].ask_price == Decimal("100.10")
