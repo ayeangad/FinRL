@@ -1,0 +1,41 @@
+from decimal import Decimal
+
+from finrl.rules.report import OrderReport
+
+
+def test_create_order_report():
+    report = OrderReport(
+        order_id="ORD-0001",
+        requested_quantity=Decimal("100"),
+        executed_quantity=Decimal("100"),
+        average_execution_price=Decimal("100.12"),
+        price_improvement=Decimal("0.10"),
+        effective_spread=Decimal("0.10"),
+        quoted_spread=Decimal("0.20"),
+    )
+
+    assert report.order_id == "ORD-0001"
+    assert report.requested_quantity == Decimal("100")
+    assert report.executed_quantity == Decimal("100")
+    assert report.average_execution_price == Decimal("100.12")
+    assert report.price_improvement == Decimal("0.10")
+    assert report.effective_spread == Decimal("0.10")
+    assert report.quoted_spread == Decimal("0.20")
+
+
+def test_order_report_allows_unexecuted_order():
+    report = OrderReport(
+        order_id="ORD-0002",
+        requested_quantity=Decimal("100"),
+        executed_quantity=Decimal("0"),
+        average_execution_price=None,
+        price_improvement=None,
+        effective_spread=None,
+        quoted_spread=None,
+    )
+
+    assert report.executed_quantity == Decimal("0")
+    assert report.average_execution_price is None
+    assert report.price_improvement is None
+    assert report.effective_spread is None
+    assert report.quoted_spread is None
