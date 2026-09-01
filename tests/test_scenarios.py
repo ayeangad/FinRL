@@ -74,3 +74,22 @@ def test_validate_scenario_rejects_wrong_execution_order():
 
     with pytest.raises(ValueError, match="references order"):
         validate_scenario(scenario, executions)
+
+def test_validate_scenario_accepts_execution_within_order_quantity():
+    scenario = load_scenario(SCENARIO_PATH)
+    executions = load_executions(scenario["executions"])
+
+    validate_scenario(scenario, executions)
+
+
+def test_validate_scenario_rejects_excess_execution_quantity():
+    scenario = load_scenario(SCENARIO_PATH)
+    executions = load_executions(scenario["executions"])
+
+    executions[0].quantity = Decimal("101")
+
+    with pytest.raises(
+        ValueError,
+        match="Total executed quantity cannot exceed requested quantity",
+    ):
+        validate_scenario(scenario, executions)
