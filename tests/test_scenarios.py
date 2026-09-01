@@ -1,6 +1,7 @@
 from decimal import Decimal
 from pathlib import Path
 import pytest
+import json
 
 from finrl.scenarios import (
     load_executions,
@@ -147,3 +148,23 @@ def test_validate_scenario_rejects_wrong_quote_security():
         match="Quote security .* does not match scenario security",
     ):
         validate_scenario(scenario)
+
+def test_load_scenario_rejects_invalid_execution_order():
+    scenario = load_scenario(SCENARIO_PATH)
+    scenario["executions"][0]["order_id"] = "WRONG-ORDER"
+
+    with pytest.raises(ValueError, match="references order"):
+        validate_scenario(scenario)
+
+def test_load_scenario_rejects_invalid_file(tmp_path):
+    scenario = load_scenario(SCENARIO_PATH)
+    scenario["executions"][0]["order_id"] = "WRONG-ORDER"
+
+    invalid_path = tmp_path / "invalid_scenario.json"
+    invalid_path.write_text(
+        json.dumps(scenario),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match="references order"):
+        load_scenario(invalid_path)
