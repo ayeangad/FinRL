@@ -52,6 +52,12 @@ def load_quotes(data: list[dict]) -> list[Quote]:
         for quote in data
     ]
 
+def load_market(data: dict) -> MarketState:
+    return MarketState(
+        security=data["security"],
+        quotes=load_quotes(data["quotes"]),
+    )
+
 
 def load_executions(data: list[dict]) -> list[Execution]:
     return [
