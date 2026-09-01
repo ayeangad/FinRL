@@ -59,65 +59,91 @@ def test_load_executions():
     assert executions[0].quantity == Decimal("100")
     assert executions[0].price == Decimal("100.00")
 
-def test_validate_scenario_accepts_matching_execution_order():
+
+def test_validate_scenario_accepts_valid_scenario():
     scenario = load_scenario(SCENARIO_PATH)
-    executions = load_executions(scenario["executions"])
 
-    validate_scenario(scenario, executions)
-
+    validate_scenario(scenario)
 
 def test_validate_scenario_rejects_wrong_execution_order():
     scenario = load_scenario(SCENARIO_PATH)
-    executions = load_executions(scenario["executions"])
 
-    executions[0].order_id = "WRONG-ORDER"
+    scenario["executions"][0]["order_id"] = "WRONG-ORDER"
 
     with pytest.raises(ValueError, match="references order"):
-        validate_scenario(scenario, executions)
+        validate_scenario(scenario)
 
-def test_validate_scenario_accepts_execution_within_order_quantity():
-    scenario = load_scenario(SCENARIO_PATH)
-    executions = load_executions(scenario["executions"])
-
-    validate_scenario(scenario, executions)
 
 
 def test_validate_scenario_rejects_excess_execution_quantity():
     scenario = load_scenario(SCENARIO_PATH)
-    executions = load_executions(scenario["executions"])
 
-    executions[0].quantity = Decimal("101")
+    scenario["executions"][0]["quantity"] = "101"
 
     with pytest.raises(
         ValueError,
         match="Total executed quantity cannot exceed requested quantity",
     ):
-        validate_scenario(scenario, executions)
-def test_validate_scenario_accepts_matching_quote_security():
-    scenario = load_scenario(SCENARIO_PATH)
-    executions = load_executions(scenario["executions"])
-    quotes = load_quotes(scenario["quotes"])
-
-    validate_scenario(
-        scenario,
-        executions,
-        quotes,
-    )
+        validate_scenario(scenario)
 
 
 def test_validate_scenario_rejects_wrong_quote_security():
     scenario = load_scenario(SCENARIO_PATH)
-    executions = load_executions(scenario["executions"])
-    quotes = load_quotes(scenario["quotes"])
 
-    quotes[0].security = "OTHER-SECURITY"
+    scenario["quotes"][0]["security"] = "OTHER-SECURITY"
 
     with pytest.raises(
         ValueError,
         match="Quote security .* does not match scenario security",
     ):
-        validate_scenario(
-            scenario,
-            executions,
-            quotes,
-        )
+        validate_scenario(scenario)
+
+def test_validate_scenario_accepts_valid_scenario():
+    scenario = load_scenario(SCENARIO_PATH)
+
+    validate_scenario(scenario)
+
+
+def test_validate_scenario_rejects_wrong_execution_order():
+    scenario = load_scenario(SCENARIO_PATH)
+
+    scenario["executions"][0]["order_id"] = "WRONG-ORDER"
+
+    with pytest.raises(ValueError, match="references order"):
+        validate_scenario(scenario)
+
+
+def test_validate_scenario_accepts_execution_within_order_quantity():
+    scenario = load_scenario(SCENARIO_PATH)
+
+    validate_scenario(scenario)
+
+
+def test_validate_scenario_rejects_excess_execution_quantity():
+    scenario = load_scenario(SCENARIO_PATH)
+
+    scenario["executions"][0]["quantity"] = "101"
+
+    with pytest.raises(
+        ValueError,
+        match="Total executed quantity cannot exceed requested quantity",
+    ):
+        validate_scenario(scenario)
+
+
+def test_validate_scenario_accepts_matching_quote_security():
+    scenario = load_scenario(SCENARIO_PATH)
+
+    validate_scenario(scenario)
+
+
+def test_validate_scenario_rejects_wrong_quote_security():
+    scenario = load_scenario(SCENARIO_PATH)
+
+    scenario["quotes"][0]["security"] = "OTHER-SECURITY"
+
+    with pytest.raises(
+        ValueError,
+        match="Quote security .* does not match scenario security",
+    ):
+        validate_scenario(scenario)
