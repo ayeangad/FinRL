@@ -1,11 +1,14 @@
 from decimal import Decimal
 from pathlib import Path
+import pytest
 
 from finrl.scenarios import (
     load_executions,
+    load_market,
     load_order,
     load_quotes,
     load_scenario,
+    validate_scenario,
 )
 
 
@@ -55,3 +58,19 @@ def test_load_executions():
     assert len(executions) == 1
     assert executions[0].quantity == Decimal("100")
     assert executions[0].price == Decimal("100.00")
+
+def test_validate_scenario_accepts_matching_execution_order():
+    scenario = load_scenario(SCENARIO_PATH)
+    executions = load_executions(scenario["executions"])
+
+    validate_scenario(scenario, executions)
+
+
+def test_validate_scenario_rejects_wrong_execution_order():
+    scenario = load_scenario(SCENARIO_PATH)
+    executions = load_executions(scenario["executions"])
+
+    executions[0].order_id = "WRONG-ORDER"
+
+    with pytest.raises(ValueError, match="references order"):
+        validate_scenario(scenario, executions)
