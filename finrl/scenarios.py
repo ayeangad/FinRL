@@ -78,6 +78,12 @@ def validate_scenario(
     executions: list[Execution],
 ) -> None:
     order_id = scenario["order"]["order_id"]
+    requested_quantity = Decimal(scenario["order"]["quantity"])
+
+    total_executed_quantity = sum(
+        (execution.quantity for execution in executions),
+        Decimal("0"),
+    )
 
     for execution in executions:
         if execution.order_id != order_id:
@@ -85,3 +91,8 @@ def validate_scenario(
                 f"Execution {execution.execution_id} references "
                 f"order {execution.order_id}, expected {order_id}"
             )
+
+    if total_executed_quantity > requested_quantity:
+        raise ValueError(
+            "Total executed quantity cannot exceed requested quantity"
+        )
