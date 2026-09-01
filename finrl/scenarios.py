@@ -72,3 +72,16 @@ def load_executions(data: list[dict]) -> list[Execution]:
         )
         for execution in data
     ]
+
+def validate_scenario(
+    scenario: dict,
+    executions: list[Execution],
+) -> None:
+    order_id = scenario["order"]["order_id"]
+
+    for execution in executions:
+        if execution.order_id != order_id:
+            raise ValueError(
+                f"Execution {execution.execution_id} references "
+                f"order {execution.order_id}, expected {order_id}"
+            )
