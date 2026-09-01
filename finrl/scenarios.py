@@ -73,14 +73,13 @@ def load_executions(data: list[dict]) -> list[Execution]:
         for execution in data
     ]
 
-def validate_scenario(
-    scenario: dict,
-    executions: list[Execution],
-    quotes: list[Quote] | None = None,
-) -> None:
+def validate_scenario(scenario: dict) -> None:
     order_id = scenario["order"]["order_id"]
     requested_quantity = Decimal(scenario["order"]["quantity"])
     security = scenario["security"]
+
+    executions = load_executions(scenario["executions"])
+    quotes = load_quotes(scenario["quotes"])
 
     total_executed_quantity = sum(
         (execution.quantity for execution in executions),
@@ -99,10 +98,9 @@ def validate_scenario(
             "Total executed quantity cannot exceed requested quantity"
         )
 
-    if quotes is not None:
-        for quote in quotes:
-            if quote.security != security:
-                raise ValueError(
-                    f"Quote security {quote.security} does not match "
-                    f"scenario security {security}"
-                )
+    for quote in quotes:
+        if quote.security != security:
+            raise ValueError(
+                f"Quote security {quote.security} does not match "
+                f"scenario security {security}"
+            )
