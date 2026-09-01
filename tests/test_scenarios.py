@@ -93,3 +93,31 @@ def test_validate_scenario_rejects_excess_execution_quantity():
         match="Total executed quantity cannot exceed requested quantity",
     ):
         validate_scenario(scenario, executions)
+def test_validate_scenario_accepts_matching_quote_security():
+    scenario = load_scenario(SCENARIO_PATH)
+    executions = load_executions(scenario["executions"])
+    quotes = load_quotes(scenario["quotes"])
+
+    validate_scenario(
+        scenario,
+        executions,
+        quotes,
+    )
+
+
+def test_validate_scenario_rejects_wrong_quote_security():
+    scenario = load_scenario(SCENARIO_PATH)
+    executions = load_executions(scenario["executions"])
+    quotes = load_quotes(scenario["quotes"])
+
+    quotes[0].security = "OTHER-SECURITY"
+
+    with pytest.raises(
+        ValueError,
+        match="Quote security .* does not match scenario security",
+    ):
+        validate_scenario(
+            scenario,
+            executions,
+            quotes,
+        )
