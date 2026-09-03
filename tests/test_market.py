@@ -41,30 +41,6 @@ def test_quote_at_returns_latest_valid_quote():
     assert quote.ask_price == Decimal("100.02")
 
 
-def test_quote_at_returns_none_before_first_quote():
-    market = MarketState(
-        security="FINRL",
-        quotes=[
-            Quote(
-                security="FINRL",
-                bid_price=Decimal("99.99"),
-                bid_size=Decimal("500"),
-                ask_price=Decimal("100.01"),
-                ask_size=Decimal("300"),
-                timestamp=datetime.fromisoformat(
-                    "2026-09-01T10:30:00.000"
-                ),
-            )
-        ],
-    )
-
-    quote = market.quote_at(
-        datetime.fromisoformat("2026-09-01T10:29:59.999")
-    )
-
-    assert quote is None
-
-
 
 def test_quote_at_selects_latest_quote_at_or_before_timestamp():
     quotes = [

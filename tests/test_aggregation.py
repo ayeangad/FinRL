@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from finrl.domain.execution import Execution
 from finrl.rules.aggregation import (
+    share_weighted_average,
     total_executed_quantity,
     volume_weighted_average_execution_price,
 )
@@ -47,3 +48,19 @@ def test_empty_executions_have_zero_quantity():
 
 def test_empty_executions_have_no_average_price():
     assert volume_weighted_average_execution_price([]) is None
+
+
+def test_share_weighted_average():
+    values = [
+        (Decimal("0.10"), Decimal("40")),
+        (Decimal("-0.10"), Decimal("20")),
+    ]
+
+    assert share_weighted_average(values) == (
+        Decimal("40") * Decimal("0.10")
+        + Decimal("20") * Decimal("-0.10")
+    ) / Decimal("60")
+
+
+def test_share_weighted_average_empty_values():
+    assert share_weighted_average([]) is None

@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from finrl.rules.horizons import RealizedSpreadHorizon
 from finrl.rules.report import OrderReport
 
 
@@ -21,6 +22,7 @@ def test_create_order_report():
     assert report.price_improvement == Decimal("0.10")
     assert report.effective_spread == Decimal("0.10")
     assert report.quoted_spread == Decimal("0.20")
+    assert report.realized_spreads == {}
 
 
 def test_order_report_allows_unexecuted_order():
@@ -39,3 +41,21 @@ def test_order_report_allows_unexecuted_order():
     assert report.price_improvement is None
     assert report.effective_spread is None
     assert report.quoted_spread is None
+    assert report.realized_spreads == {}
+
+
+def test_order_report_realized_spreads_explicit_values():
+    report = OrderReport(
+        order_id="ORD-0003",
+        requested_quantity=Decimal("100"),
+        executed_quantity=Decimal("100"),
+        average_execution_price=Decimal("100.00"),
+        realized_spreads={
+            RealizedSpreadHorizon.MS_50: Decimal("0.10"),
+            RealizedSpreadHorizon.S_1: None,
+        },
+    )
+
+    assert report.realized_spreads[RealizedSpreadHorizon.MS_50] == Decimal("0.10")
+    assert report.realized_spreads[RealizedSpreadHorizon.S_1] is None
+

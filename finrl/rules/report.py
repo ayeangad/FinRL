@@ -2,6 +2,8 @@ from decimal import Decimal
 
 from pydantic import BaseModel, Field
 
+from finrl.rules.horizons import RealizedSpreadHorizon
+
 
 class OrderReport(BaseModel):
     order_id: str
@@ -17,3 +19,7 @@ class OrderReport(BaseModel):
     price_improvement: Decimal | None = None
     effective_spread: Decimal | None = None
     quoted_spread: Decimal | None = None
+
+    realized_spreads: dict[RealizedSpreadHorizon, Decimal | None] = Field(
+        default_factory=dict
+    )
