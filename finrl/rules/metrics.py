@@ -103,4 +103,80 @@ def share_weighted_realized_spread(
     return share_weighted_average(values)
 
 
+def percentage_effective_spread(
+    side: OrderSide,
+    execution_price: Decimal,
+    receipt_quote: Quote,
+) -> Decimal:
+    return effective_spread(
+        side,
+        execution_price,
+        receipt_quote,
+    ) / midpoint(receipt_quote)
+
+
+def percentage_quoted_spread(
+    receipt_quote: Quote,
+) -> Decimal:
+    return quoted_spread(receipt_quote) / midpoint(receipt_quote)
+
+
+def percentage_realized_spread(
+    side: OrderSide,
+    execution_price: Decimal,
+    horizon_quote: Quote,
+    receipt_quote: Quote,
+) -> Decimal:
+    return realized_spread(
+        side,
+        execution_price,
+        horizon_quote,
+    ) / midpoint(receipt_quote)
+
+
+def share_weighted_percentage_effective_spread(
+    side: OrderSide,
+    executions: list[Execution],
+    quote: Quote,
+) -> Decimal | None:
+    values = [
+        (
+            percentage_effective_spread(side, execution.price, quote),
+            execution.quantity,
+        )
+        for execution in executions
+    ]
+    return share_weighted_average(values)
+
+
+def share_weighted_percentage_realized_spread(
+    side: OrderSide,
+    executions: list[Execution],
+    future_quotes: dict[str, Quote | None],
+    receipt_quote: Quote,
+) -> Decimal | None:
+    values = []
+
+    for execution in executions:
+        horizon_quote = future_quotes.get(execution.execution_id)
+
+        if horizon_quote is None:
+            return None
+
+        values.append(
+            (
+                percentage_realized_spread(
+                    side,
+                    execution.price,
+                    horizon_quote,
+                    receipt_quote,
+                ),
+                execution.quantity,
+            )
+        )
+
+    return share_weighted_average(values)
+
+
+
 

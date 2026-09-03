@@ -383,4 +383,109 @@ def test_share_weighted_realized_spread_empty_executions():
     ) is None
 
 
+def test_percentage_effective_spread():
+    from finrl.rules.metrics import percentage_effective_spread
+
+    receipt_quote = make_quote()  # 99.90 / 100.10 -> midpoint = 100.00
+
+    # Effective spread $ = 2 * |100.05 - 100.00| = 0.10
+    # Effective spread % = 0.10 / 100.00 = 0.001
+    assert percentage_effective_spread(OrderSide.BUY, Decimal("100.05"), receipt_quote) == Decimal("0.001")
+
+    # Zero effective spread $ = 2 * |100.00 - 100.00| = 0.00 -> % = 0.000
+    assert percentage_effective_spread(OrderSide.BUY, Decimal("100.00"), receipt_quote) == Decimal("0")
+
+
+def test_percentage_quoted_spread():
+    from finrl.rules.metrics import percentage_quoted_spread
+
+    receipt_quote = make_quote()  # 99.90 / 100.10 -> quoted $ = 0.20, midpoint = 100.00
+    # Quoted spread % = 0.20 / 100.00 = 0.002
+    assert percentage_quoted_spread(receipt_quote) == Decimal("0.002")
+
+
+def test_percentage_realized_spread_uses_receipt_midpoint_denominator():
+    from finrl.rules.metrics import percentage_realized_spread
+
+    receipt_quote = Quote(
+        security="FINRL",
+        bid_price=Decimal("99.90"),
+        bid_size=Decimal("500"),
+        ask_price=Decimal("100.10"),
+        ask_size=Decimal("300"),
+        timestamp="2026-09-01T10:30:00.000",
+    )  # receipt midpoint = 100.00
+
+    future_quote = Quote(
+        security="FINRL",
+        bid_price=Decimal("100.10"),
+        bid_size=Decimal("500"),
+        ask_price=Decimal("100.30"),
+        ask_size=Decimal("300"),
+        timestamp="2026-09-01T10:30:01.000",
+    )  # future midpoint = 100.20
+
+    # BUY execution = 100.00
+    # realized $ = 2 * (100.00 - 100.20) = -0.40
+    # realized % = -0.40 / 100.00 = -0.004 (verifying receipt midpoint 100.00 is denominator, NOT 100.20!)
+    result_neg = percentage_realized_spread(
+        OrderSide.BUY,
+        Decimal("100.00"),
+        future_quote,
+        receipt_quote,
+    )
+    assert result_neg == Decimal("-0.004")
+
+    # BUY execution = 100.30
+    # realized $ = 2 * (100.30 - 100.20) = +0.20
+    # realized % = +0.20 / 100.00 = +0.002
+    result_pos = percentage_realized_spread(
+        OrderSide.BUY,
+        Decimal("100.30"),
+        future_quote,
+        receipt_quote,
+    )
+    assert result_pos == Decimal("0.002")
+
+
+def test_share_weighted_percentage_effective_spread():
+    from finrl.rules.metrics import share_weighted_percentage_effective_spread
+
+    receipt_quote = make_quote()  # midpoint = 100.00
+    ex1 = Execution(execution_id="E1", order_id="O1", price=Decimal("100.00"), quantity=Decimal("40"), executed_at="2026-09-01T10:30:00.100")  # %ES = 0
+    ex2 = Execution(execution_id="E2", order_id="O1", price=Decimal("100.20"), quantity=Decimal("20"), executed_at="2026-09-01T10:30:00.200")  # %ES = 0.40/100 = 0.004
+
+    # (40 * 0 + 20 * 0.004) / 60 = 0.08 / 60 = 0.0013333...
+    res = share_weighted_percentage_effective_spread(OrderSide.BUY, [ex1, ex2], receipt_quote)
+    assert res == (Decimal("40") * Decimal("0") + Decimal("20") * Decimal("0.004")) / Decimal("60")
+
+
+def test_share_weighted_percentage_realized_spread():
+    from finrl.rules.metrics import share_weighted_percentage_realized_spread
+
+    receipt_quote = Quote(
+        security="FINRL",
+        bid_price=Decimal("99.90"),
+        bid_size=Decimal("500"),
+        ask_price=Decimal("100.10"),
+        ask_size=Decimal("300"),
+        timestamp="2026-09-01T10:30:00.000",
+    )  # receipt midpoint = 100.00
+
+    ex1 = Execution(execution_id="E1", order_id="O1", price=Decimal("100.00"), quantity=Decimal("40"), executed_at="2026-09-01T10:30:00.100")
+    ex2 = Execution(execution_id="E2", order_id="O1", price=Decimal("100.30"), quantity=Decimal("20"), executed_at="2026-09-01T10:30:00.200")
+
+    future_q1 = Quote(security="FINRL", bid_price=Decimal("100.10"), bid_size=Decimal("500"), ask_price=Decimal("100.30"), ask_size=Decimal("300"), timestamp="2026-09-01T10:30:01.000")
+    future_q2 = Quote(security="FINRL", bid_price=Decimal("100.00"), bid_size=Decimal("500"), ask_price=Decimal("100.20"), ask_size=Decimal("300"), timestamp="2026-09-01T10:30:01.000")
+
+    # %RS1 = -0.40 / 100.00 = -0.004
+    # %RS2 = +0.40 / 100.00 = +0.004
+    future_quotes = {"E1": future_q1, "E2": future_q2}
+
+    res = share_weighted_percentage_realized_spread(OrderSide.BUY, [ex1, ex2], future_quotes, receipt_quote)
+    assert res == (Decimal("40") * Decimal("-0.004") + Decimal("20") * Decimal("0.004")) / Decimal("60")
+
+
+
+
 
