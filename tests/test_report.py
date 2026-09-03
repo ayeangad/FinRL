@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from finrl.rules.classification import OrderTypeCategory
 from finrl.rules.horizons import RealizedSpreadHorizon
 from finrl.rules.order_size import OrderSizeBucket
 from finrl.rules.report import OrderReport
@@ -9,6 +10,7 @@ def test_create_order_report():
     report = OrderReport(
         order_id="ORD-0001",
         order_size_bucket=OrderSizeBucket.SHARES_100_TO_499,
+        order_type_category=OrderTypeCategory.MARKETABLE_LIMIT,
         reportable=True,
         requested_quantity=Decimal("100"),
         executed_quantity=Decimal("100"),
@@ -20,6 +22,7 @@ def test_create_order_report():
 
     assert report.order_id == "ORD-0001"
     assert report.order_size_bucket == OrderSizeBucket.SHARES_100_TO_499
+    assert report.order_type_category == OrderTypeCategory.MARKETABLE_LIMIT
     assert report.reportable is True
     assert report.requested_quantity == Decimal("100")
     assert report.executed_quantity == Decimal("100")
@@ -34,6 +37,7 @@ def test_order_report_allows_unexecuted_order():
     report = OrderReport(
         order_id="ORD-0002",
         order_size_bucket=OrderSizeBucket.SHARES_100_TO_499,
+        order_type_category=OrderTypeCategory.NON_MARKETABLE_LIMIT,
         reportable=True,
         requested_quantity=Decimal("100"),
         executed_quantity=Decimal("0"),
@@ -44,6 +48,7 @@ def test_order_report_allows_unexecuted_order():
     )
 
     assert report.order_size_bucket == OrderSizeBucket.SHARES_100_TO_499
+    assert report.order_type_category == OrderTypeCategory.NON_MARKETABLE_LIMIT
     assert report.reportable is True
     assert report.executed_quantity == Decimal("0")
     assert report.average_execution_price is None
@@ -57,6 +62,7 @@ def test_order_report_realized_spreads_explicit_values():
     report = OrderReport(
         order_id="ORD-0003",
         order_size_bucket=OrderSizeBucket.SHARES_100_TO_499,
+        order_type_category=OrderTypeCategory.MARKET,
         reportable=True,
         requested_quantity=Decimal("100"),
         executed_quantity=Decimal("100"),
@@ -68,8 +74,7 @@ def test_order_report_realized_spreads_explicit_values():
     )
 
     assert report.order_size_bucket == OrderSizeBucket.SHARES_100_TO_499
+    assert report.order_type_category == OrderTypeCategory.MARKET
     assert report.reportable is True
     assert report.realized_spreads[RealizedSpreadHorizon.MS_50] == Decimal("0.10")
     assert report.realized_spreads[RealizedSpreadHorizon.S_1] is None
-
-

@@ -516,3 +516,43 @@ def test_evaluate_non_marketable_limit_executable_unexecuted():
     assert report.effective_spread is None
     assert report.quoted_spread is None
     assert report.realized_spreads[RealizedSpreadHorizon.MS_50] is None
+
+
+def test_evaluate_order_assigns_correct_order_type_category():
+    from finrl.rules.classification import OrderTypeCategory
+
+    received_at = datetime.fromisoformat("2026-09-01T10:30:00.000")
+    quote = Quote(
+        security="FINRL",
+        bid_price=Decimal("99.90"),
+        bid_size=Decimal("500"),
+        ask_price=Decimal("100.10"),
+        ask_size=Decimal("300"),
+        timestamp=received_at,
+    )
+    market = MarketState(security="FINRL", quotes=[quote])
+
+    # 1. Market order
+    mkt = Order(order_id="O1", security="FINRL", side=OrderSide.BUY, order_type=OrderType.MARKET, quantity=Decimal("100"), received_at=received_at)
+    r_mkt = evaluate_order(mkt, [], market)
+    assert r_mkt.order_type_category == OrderTypeCategory.MARKET
+
+    # 2. Marketable Limit order (BUY @ 100.10)
+    mkt_lim = Order(order_id="O2", security="FINRL", side=OrderSide.BUY, order_type=OrderType.LIMIT, quantity=Decimal("100"), limit_price=Decimal("100.10"), received_at=received_at)
+    r_mkt_lim = evaluate_order(mkt_lim, [], market)
+    assert r_mkt_lim.order_type_category == OrderTypeCategory.MARKETABLE_LIMIT
+
+    # 3. Midpoint-or-better Limit order (BUY @ 100.00)
+    mid_lim = Order(order_id="O3", security="FINRL", side=OrderSide.BUY, order_type=OrderType.LIMIT, quantity=Decimal("100"), limit_price=Decimal("100.00"), received_at=received_at)
+    r_mid_lim = evaluate_order(mid_lim, [], market)
+    assert r_mid_lim.order_type_category == OrderTypeCategory.MIDPOINT_OR_BETTER_LIMIT
+
+    # 4. Non-marketable Limit order (BUY @ 99.95)
+    non_mkt_lim = Order(order_id="O4", security="FINRL", side=OrderSide.BUY, order_type=OrderType.LIMIT, quantity=Decimal("100"), limit_price=Decimal("99.95"), received_at=received_at)
+    r_non_mkt_lim = evaluate_order(non_mkt_lim, [], market)
+    assert r_non_mkt_lim.order_type_category == OrderTypeCategory.NON_MARKETABLE_LIMIT
+
+    # 5. Stop order
+    stop_ord = Order(order_id="O5", security="FINRL", side=OrderSide.BUY, order_type=OrderType.STOP, quantity=Decimal("100"), stop_price=Decimal("100.20"), received_at=received_at)
+    r_stop = evaluate_order(stop_ord, [], market)
+    assert r_stop.order_type_category == OrderTypeCategory.STOP

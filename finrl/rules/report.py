@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from pydantic import BaseModel, Field
 
+from finrl.rules.classification import OrderTypeCategory
 from finrl.rules.horizons import RealizedSpreadHorizon
 from finrl.rules.order_size import OrderSizeBucket
 
@@ -9,6 +10,7 @@ from finrl.rules.order_size import OrderSizeBucket
 class OrderReport(BaseModel):
     order_id: str
     order_size_bucket: OrderSizeBucket
+    order_type_category: OrderTypeCategory
     reportable: bool
 
     requested_quantity: Decimal = Field(gt=0)

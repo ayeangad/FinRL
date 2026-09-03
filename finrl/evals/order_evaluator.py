@@ -5,6 +5,7 @@ from finrl.rules.aggregation import (
     total_executed_quantity,
     volume_weighted_average_execution_price,
 )
+from finrl.rules.classification import OrderTypeCategory, classify_order_category
 from finrl.rules.eligibility import is_reportable_order
 from finrl.rules.execution_context import realized_spread_at_horizon
 from finrl.rules.horizons import RealizedSpreadHorizon
@@ -29,11 +30,18 @@ def evaluate_order(
     average_price = volume_weighted_average_execution_price(executions)
     size_bucket = classify_order_size(order.quantity)
     reportable = is_reportable_order(order, executions, market)
+    quote = market.quote_at(order.received_at)
+
+    try:
+        category = classify_order_category(order, quote)
+    except ValueError:
+        category = OrderTypeCategory.NON_MARKETABLE_LIMIT
 
     if not reportable:
         return OrderReport(
             order_id=order.order_id,
             order_size_bucket=size_bucket,
+            order_type_category=category,
             reportable=False,
             requested_quantity=order.quantity,
             executed_quantity=executed_quantity,
@@ -50,6 +58,7 @@ def evaluate_order(
         return OrderReport(
             order_id=order.order_id,
             order_size_bucket=size_bucket,
+            order_type_category=category,
             reportable=True,
             requested_quantity=order.quantity,
             executed_quantity=executed_quantity,
@@ -62,12 +71,11 @@ def evaluate_order(
             },
         )
 
-    quote = market.quote_at(order.received_at)
-
     if quote is None:
         return OrderReport(
             order_id=order.order_id,
             order_size_bucket=size_bucket,
+            order_type_category=category,
             reportable=False,
             requested_quantity=order.quantity,
             executed_quantity=executed_quantity,
@@ -100,6 +108,7 @@ def evaluate_order(
     return OrderReport(
         order_id=order.order_id,
         order_size_bucket=size_bucket,
+        order_type_category=category,
         reportable=True,
         requested_quantity=order.quantity,
         executed_quantity=execution_result.executed_quantity,
@@ -117,5 +126,3 @@ def evaluate_order(
         quoted_spread=quoted_spread(quote),
         realized_spreads=realized_spreads,
     )
-
-

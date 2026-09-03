@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from finrl.rules.classification import OrderTypeCategory
 from finrl.rules.horizons import RealizedSpreadHorizon
 from finrl.rules.order_size import OrderSizeBucket
 from finrl.rules.report import OrderReport
@@ -23,6 +24,7 @@ def make_report(
     return OrderReport(
         order_id=order_id,
         order_size_bucket=OrderSizeBucket.SHARES_100_TO_499,
+        order_type_category=OrderTypeCategory.MARKET,
         reportable=True,
         requested_quantity=Decimal(requested_qty),
         executed_quantity=Decimal(executed_qty),
@@ -53,7 +55,7 @@ def test_normal_share_weighted_aggregation():
 
 def test_aggregation_ignores_none_metrics():
     r1 = make_report("R1", executed_qty="100", effective_spread="0.10")
-    r2 = make_report("R2", executed_qty="200", effective_spread=None)  # None metric
+    r2 = make_report("R2", executed_qty="200", effective_spread=None)
     r3 = make_report("R3", executed_qty="100", effective_spread="0.20")
 
     # (100*0.10 + 100*0.20)/(100+100) = 30/200 = 0.15

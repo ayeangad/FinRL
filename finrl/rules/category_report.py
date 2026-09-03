@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from pydantic import BaseModel, Field
 
+from finrl.rules.classification import OrderTypeCategory
 from finrl.rules.horizons import RealizedSpreadHorizon
 from finrl.rules.order_size import OrderSizeBucket
 from finrl.rules.report import OrderReport
@@ -14,6 +15,7 @@ from finrl.rules.report_statistics import (
 
 
 class CategoryReport(BaseModel):
+    order_type_category: OrderTypeCategory
     order_size_bucket: OrderSizeBucket
     order_count: int = Field(ge=0)
     executed_order_count: int = Field(ge=0)
@@ -32,12 +34,17 @@ class CategoryReport(BaseModel):
 
 def build_category_report(
     reports: list[OrderReport],
+    category: OrderTypeCategory,
     bucket: OrderSizeBucket,
 ) -> CategoryReport:
     bucket_reports = [
         report
         for report in reports
-        if report.reportable and report.order_size_bucket == bucket
+        if (
+            report.reportable
+            and report.order_type_category == category
+            and report.order_size_bucket == bucket
+        )
     ]
 
     order_count = len(bucket_reports)
@@ -60,6 +67,7 @@ def build_category_report(
     }
 
     return CategoryReport(
+        order_type_category=category,
         order_size_bucket=bucket,
         order_count=order_count,
         executed_order_count=executed_order_count,
