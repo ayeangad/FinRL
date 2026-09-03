@@ -7,13 +7,18 @@ from finrl.rules.aggregation import (
 )
 from finrl.rules.classification import OrderTypeCategory, classify_order_category
 from finrl.rules.eligibility import is_reportable_order
-from finrl.rules.execution_context import realized_spread_at_horizon
+from finrl.rules.execution_context import (
+    percentage_realized_spread_at_horizon,
+    realized_spread_at_horizon,
+)
 from finrl.rules.horizons import RealizedSpreadHorizon
 from finrl.rules.metrics import (
     effective_spread,
+    percentage_quoted_spread,
     price_improvement,
     quoted_spread,
     share_weighted_effective_spread,
+    share_weighted_percentage_effective_spread,
     share_weighted_price_improvement,
 )
 from finrl.rules.order_result import OrderExecutionResult
@@ -52,6 +57,11 @@ def evaluate_order(
             realized_spreads={
                 horizon: None for horizon in RealizedSpreadHorizon
             },
+            percentage_effective_spread=None,
+            percentage_quoted_spread=None,
+            percentage_realized_spreads={
+                horizon: None for horizon in RealizedSpreadHorizon
+            },
         )
 
     if average_price is None:
@@ -67,6 +77,11 @@ def evaluate_order(
             effective_spread=None,
             quoted_spread=None,
             realized_spreads={
+                horizon: None for horizon in RealizedSpreadHorizon
+            },
+            percentage_effective_spread=None,
+            percentage_quoted_spread=None,
+            percentage_realized_spreads={
                 horizon: None for horizon in RealizedSpreadHorizon
             },
         )
@@ -86,6 +101,11 @@ def evaluate_order(
             realized_spreads={
                 horizon: None for horizon in RealizedSpreadHorizon
             },
+            percentage_effective_spread=None,
+            percentage_quoted_spread=None,
+            percentage_realized_spreads={
+                horizon: None for horizon in RealizedSpreadHorizon
+            },
         )
 
     execution_result = OrderExecutionResult(
@@ -101,6 +121,17 @@ def evaluate_order(
             executions,
             market,
             horizon.duration,
+        )
+        for horizon in RealizedSpreadHorizon
+    }
+
+    percentage_realized_spreads = {
+        horizon: percentage_realized_spread_at_horizon(
+            order.side,
+            executions,
+            market,
+            horizon.duration,
+            quote,
         )
         for horizon in RealizedSpreadHorizon
     }
@@ -125,4 +156,11 @@ def evaluate_order(
         ),
         quoted_spread=quoted_spread(quote),
         realized_spreads=realized_spreads,
+        percentage_effective_spread=share_weighted_percentage_effective_spread(
+            order.side,
+            executions,
+            quote,
+        ),
+        percentage_quoted_spread=percentage_quoted_spread(quote),
+        percentage_realized_spreads=percentage_realized_spreads,
     )

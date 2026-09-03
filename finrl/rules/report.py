@@ -28,3 +28,10 @@ class OrderReport(BaseModel):
     realized_spreads: dict[RealizedSpreadHorizon, Decimal | None] = Field(
         default_factory=dict
     )
+
+    percentage_effective_spread: Decimal | None = None
+    percentage_quoted_spread: Decimal | None = None
+
+    percentage_realized_spreads: dict[RealizedSpreadHorizon, Decimal | None] = Field(
+        default_factory=dict
+    )

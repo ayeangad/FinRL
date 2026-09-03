@@ -556,3 +556,134 @@ def test_evaluate_order_assigns_correct_order_type_category():
     stop_ord = Order(order_id="O5", security="FINRL", side=OrderSide.BUY, order_type=OrderType.STOP, quantity=Decimal("100"), stop_price=Decimal("100.20"), received_at=received_at)
     r_stop = evaluate_order(stop_ord, [], market)
     assert r_stop.order_type_category == OrderTypeCategory.STOP
+
+
+def test_evaluate_order_percentage_metrics_executed_order():
+    received_at = datetime.fromisoformat("2026-09-01T10:30:00.000")
+    receipt_quote = Quote(
+        security="FINRL",
+        bid_price=Decimal("99.90"),
+        bid_size=Decimal("500"),
+        ask_price=Decimal("100.10"),
+        ask_size=Decimal("300"),
+        timestamp=received_at,
+    )  # midpoint = 100.00
+
+    # 50ms quote: midpoint = 100.20
+    q_50ms = Quote(
+        security="FINRL",
+        bid_price=Decimal("100.10"),
+        bid_size=Decimal("500"),
+        ask_price=Decimal("100.30"),
+        ask_size=Decimal("300"),
+        timestamp=received_at + timedelta(milliseconds=50),
+    )
+
+    market = MarketState(security="FINRL", quotes=[receipt_quote, q_50ms])
+
+    order = Order(
+        order_id="ORD-PCT-01",
+        security="FINRL",
+        side=OrderSide.BUY,
+        order_type=OrderType.MARKET,
+        quantity=Decimal("100"),
+        received_at=received_at,
+    )
+
+    executions = [
+        Execution(execution_id="E1", order_id="ORD-PCT-01", price=Decimal("100.05"), quantity=Decimal("40"), executed_at=received_at),
+        Execution(execution_id="E2", order_id="ORD-PCT-01", price=Decimal("100.15"), quantity=Decimal("60"), executed_at=received_at),
+    ]
+
+    report = evaluate_order(order, executions, market)
+
+    assert report.reportable is True
+    # Quoted % = 0.20 / 100.00 = 0.002
+    assert report.percentage_quoted_spread == Decimal("0.002")
+
+    # ES1 % = 2*|100.05 - 100.00| / 100.00 = 0.10 / 100.00 = 0.001
+    # ES2 % = 2*|100.15 - 100.00| / 100.00 = 0.30 / 100.00 = 0.003
+    # Weighted %ES = (40*0.001 + 60*0.003)/100 = (0.04 + 0.18)/100 = 0.0022
+    assert report.percentage_effective_spread == Decimal("0.0022")
+
+    # RS1 % 50ms = 2*(100.05 - 100.20) / 100.00 = -0.30 / 100.00 = -0.003
+    # RS2 % 50ms = 2*(100.15 - 100.20) / 100.00 = -0.10 / 100.00 = -0.001
+    # Weighted %RS 50ms = (40*-0.003 + 60*-0.001)/100 = -0.0018
+    assert report.percentage_realized_spreads[RealizedSpreadHorizon.MS_50] == Decimal("-0.0018")
+
+
+def test_evaluate_order_percentage_metrics_missing_horizon_quote():
+    received_at = datetime.fromisoformat("2026-09-01T10:30:00.000")
+    receipt_quote = Quote(
+        security="FINRL",
+        bid_price=Decimal("99.90"),
+        bid_size=Decimal("500"),
+        ask_price=Decimal("100.10"),
+        ask_size=Decimal("300"),
+        timestamp=received_at,
+    )
+    # Market only has the receipt quote at received_at - 1 minute (so for execution at received_at - 1m, 50ms quote is absent if market quotes start after execution + 50ms)
+    # If execution occurs BEFORE any quotes in market:
+    market = MarketState(security="FINRL", quotes=[receipt_quote])
+
+    order = Order(
+        order_id="ORD-PCT-MISS",
+        security="FINRL",
+        side=OrderSide.BUY,
+        order_type=OrderType.MARKET,
+        quantity=Decimal("100"),
+        received_at=received_at,
+    )
+
+    # Execution happened 10 minutes BEFORE receipt_quote was published
+    earlier_exec = received_at - timedelta(minutes=10)
+    executions = [
+        Execution(execution_id="E1", order_id="ORD-PCT-MISS", price=Decimal("100.00"), quantity=Decimal("100"), executed_at=earlier_exec),
+    ]
+
+    report = evaluate_order(order, executions, market)
+    assert report.percentage_realized_spreads[RealizedSpreadHorizon.MS_50] is None
+
+
+
+def test_evaluate_order_percentage_metrics_unexecuted_or_non_reportable():
+    received_at = datetime.fromisoformat("2026-09-01T10:30:00.000")
+    receipt_quote = Quote(
+        security="FINRL",
+        bid_price=Decimal("99.90"),
+        bid_size=Decimal("500"),
+        ask_price=Decimal("100.10"),
+        ask_size=Decimal("300"),
+        timestamp=received_at,
+    )
+    market = MarketState(security="FINRL", quotes=[receipt_quote])
+
+    order = Order(
+        order_id="ORD-PCT-02",
+        security="FINRL",
+        side=OrderSide.BUY,
+        order_type=OrderType.MARKET,
+        quantity=Decimal("100"),
+        received_at=received_at,
+    )
+
+    # 0 executions (unexecuted)
+    r_unexec = evaluate_order(order, [], market)
+    assert r_unexec.percentage_effective_spread is None
+    assert r_unexec.percentage_quoted_spread is None
+    assert all(v is None for v in r_unexec.percentage_realized_spreads.values())
+
+    # Non-reportable order (received outside market hours)
+    out_of_hours = datetime.fromisoformat("2026-09-01T08:00:00.000")
+    order_non_rep = Order(
+        order_id="ORD-PCT-03",
+        security="FINRL",
+        side=OrderSide.BUY,
+        order_type=OrderType.MARKET,
+        quantity=Decimal("100"),
+        received_at=out_of_hours,
+    )
+    r_non_rep = evaluate_order(order_non_rep, [], market)
+    assert r_non_rep.percentage_effective_spread is None
+    assert r_non_rep.percentage_quoted_spread is None
+    assert all(v is None for v in r_non_rep.percentage_realized_spreads.values())
