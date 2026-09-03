@@ -97,7 +97,7 @@ class Rule605Env:
             ts_str = action.arguments.get("timestamp")
             ts = datetime.fromisoformat(ts_str) if ts_str else None
             domain_orders, market, _ = parse_scenario(self.scenario)
-            quote = market.get_nbbo(ts) if ts else None
+            quote = market.quote_at(ts) if ts else None
             tool_output = quote.model_dump(mode="json") if quote else None
 
         elif action.tool_name == "get_quotes":
