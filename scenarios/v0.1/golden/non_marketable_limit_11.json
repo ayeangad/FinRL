@@ -1,0 +1,27 @@
+{
+  "scenario_id": "non_marketable_limit_11",
+  "version": "v0.1",
+  "security": "FINRL",
+  "orders": [
+    {
+      "order_id": "O1",
+      "side": "buy",
+      "order_type": "limit",
+      "quantity": "7000",
+      "limit_price": "99.80",
+      "stop_price": null,
+      "received_at": "2026-09-01T10:30:00"
+    }
+  ],
+  "quotes": [
+    {
+      "security": "FINRL",
+      "bid_price": "99.90",
+      "bid_size": "500",
+      "ask_price": "100.10",
+      "ask_size": "300",
+      "timestamp": "2026-09-01T10:30:00"
+    }
+  ],
+  "executions": []
+}

@@ -1,0 +1,43 @@
+{
+  "scenario_id": "stop_limit_03",
+  "version": "v0.1",
+  "security": "FINRL",
+  "orders": [
+    {
+      "order_id": "O1",
+      "side": "buy",
+      "order_type": "stop_limit",
+      "quantity": "100",
+      "limit_price": "100.35",
+      "stop_price": "100.25",
+      "received_at": "2026-09-01T10:30:00"
+    }
+  ],
+  "quotes": [
+    {
+      "security": "FINRL",
+      "bid_price": "99.90",
+      "bid_size": "500",
+      "ask_price": "100.10",
+      "ask_size": "300",
+      "timestamp": "2026-09-01T10:30:00"
+    },
+    {
+      "security": "FINRL",
+      "bid_price": "100.20",
+      "bid_size": "500",
+      "ask_price": "100.30",
+      "ask_size": "300",
+      "timestamp": "2026-09-01T10:30:01"
+    }
+  ],
+  "executions": [
+    {
+      "execution_id": "E1",
+      "order_id": "O1",
+      "price": "100.30",
+      "quantity": "100",
+      "executed_at": "2026-09-01T10:30:01"
+    }
+  ]
+}

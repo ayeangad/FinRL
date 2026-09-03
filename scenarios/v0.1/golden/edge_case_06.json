@@ -1,0 +1,35 @@
+{
+  "scenario_id": "edge_case_06",
+  "version": "v0.1",
+  "security": "FINRL",
+  "orders": [
+    {
+      "order_id": "O1",
+      "side": "buy",
+      "order_type": "market",
+      "quantity": "100",
+      "limit_price": null,
+      "stop_price": null,
+      "received_at": "2026-09-01T10:30:00"
+    }
+  ],
+  "quotes": [
+    {
+      "security": "FINRL",
+      "bid_price": "10.00",
+      "bid_size": "500",
+      "ask_price": "20.00",
+      "ask_size": "300",
+      "timestamp": "2026-09-01T10:30:00"
+    }
+  ],
+  "executions": [
+    {
+      "execution_id": "E1",
+      "order_id": "O1",
+      "price": "15.00",
+      "quantity": "100",
+      "executed_at": "2026-09-01T10:30:00"
+    }
+  ]
+}

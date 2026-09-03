@@ -1,0 +1,27 @@
+{
+  "scenario_id": "midpoint_limit_08",
+  "version": "v0.1",
+  "security": "FINRL",
+  "orders": [
+    {
+      "order_id": "O1",
+      "side": "sell",
+      "order_type": "limit",
+      "quantity": "200",
+      "limit_price": "100.00",
+      "stop_price": null,
+      "received_at": "2026-09-01T10:30:00"
+    }
+  ],
+  "quotes": [
+    {
+      "security": "FINRL",
+      "bid_price": "99.90",
+      "bid_size": "500",
+      "ask_price": "100.10",
+      "ask_size": "300",
+      "timestamp": "2026-09-01T10:30:00"
+    }
+  ],
+  "executions": []
+}

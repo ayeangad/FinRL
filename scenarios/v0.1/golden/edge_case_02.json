@@ -1,0 +1,59 @@
+{
+  "scenario_id": "edge_case_02",
+  "version": "v0.1",
+  "security": "FINRL",
+  "orders": [
+    {
+      "order_id": "O1",
+      "side": "buy",
+      "order_type": "market",
+      "quantity": "100",
+      "limit_price": null,
+      "stop_price": null,
+      "received_at": "2026-09-01T10:30:00"
+    },
+    {
+      "order_id": "O2",
+      "side": "buy",
+      "order_type": "market",
+      "quantity": "300",
+      "limit_price": null,
+      "stop_price": null,
+      "received_at": "2026-09-01T10:30:00"
+    }
+  ],
+  "quotes": [
+    {
+      "security": "STOCKA",
+      "bid_price": "9.90",
+      "bid_size": "500",
+      "ask_price": "10.10",
+      "ask_size": "300",
+      "timestamp": "2026-09-01T10:30:00"
+    },
+    {
+      "security": "STOCKB",
+      "bid_price": "99.90",
+      "bid_size": "500",
+      "ask_price": "100.10",
+      "ask_size": "300",
+      "timestamp": "2026-09-01T10:30:00"
+    }
+  ],
+  "executions": [
+    {
+      "execution_id": "E1",
+      "order_id": "O1",
+      "price": "10.05",
+      "quantity": "100",
+      "executed_at": "2026-09-01T10:30:00"
+    },
+    {
+      "execution_id": "E2",
+      "order_id": "O2",
+      "price": "100.05",
+      "quantity": "300",
+      "executed_at": "2026-09-01T10:30:00"
+    }
+  ]
+}
