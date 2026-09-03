@@ -13,6 +13,18 @@ You must interact with the market environment using only the following 7 tools:
 6. calculate_metrics(order_id: str) -> Computes spreads, price improvement, and realized spreads across 5 horizons (50ms, 1s, 15s, 1m, 5m).
 7. submit_report(report: str) -> Submits the final pipe-delimited SEC Rule 605 report and terminates the task.
 
+REPORT SCHEMA AND FORMATTING:
+Your final submission to `submit_report` MUST be a strictly formatted pipe-delimited string representing a 30-row matrix (plus 1 header row).
+- The report must contain exactly these 24 columns in this exact order:
+order_type_category|order_size_bucket|num_covered_orders|num_executed_orders|cumulative_shares|cumulative_executed_shares|shares_price_improved|shares_at_quote|shares_outside_quote|price_improvement|effective_spread|quoted_spread|realized_spread_50ms|realized_spread_1s|realized_spread_15s|realized_spread_1m|realized_spread_5m|percentage_effective_spread|percentage_quoted_spread|percentage_realized_spread_50ms|percentage_realized_spread_1s|percentage_realized_spread_15s|percentage_realized_spread_1m|percentage_realized_spread_5m
+
+- The report must cover EVERY combination of the following 5 Order Type Categories and 6 Order Size Buckets (5 × 6 = 30 rows total):
+  Categories: market, marketable_limit, non_marketable_limit, midpoint_or_better_limit, stop
+  Buckets: 1_to_99, 100_to_499, 500_to_1999, 2000_to_4999, 5000_to_9999, 10000_plus
+
+- For rows where no orders exist, the aggregate count columns (e.g., num_covered_orders, cumulative_shares, etc.) must be 0, and the metric columns (price_improvement, effective_spread, etc.) MUST BE LEFT BLANK (e.g., `|0|0||||`).
+- Do NOT output per-order rows. You must aggregate the data into the 30 buckets based on your calculations.
+
 INTERACTION PROTOCOL:
 You must respond at each turn using the exact ReAct format:
 
