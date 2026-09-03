@@ -1,12 +1,11 @@
-import os
 import time
 from typing import Any
 
 
-class Qwen3_4B_Runner:
+class Qwen3_1_7B_Runner:
     def __init__(
         self,
-        checkpoint: str = "Qwen/Qwen3-4B-Instruct",
+        checkpoint: str = "Qwen/Qwen3-1.7B",
         device: str | None = None,
         mode: str = "mock",
     ):
@@ -23,40 +22,49 @@ class Qwen3_4B_Runner:
         if self.mode == "real":
             try:
                 import torch
-                from transformers import AutoModelForCausalLM, AutoTokenizer
+                from transformers import (
+                    AutoModelForCausalLM,
+                    AutoTokenizer,
+                    BitsAndBytesConfig,
+                )
 
-                device_str = self.device or ("cuda" if torch.cuda.is_available() else "cpu")
-                self.device = device_str
-
-                if torch.cuda.is_available():
-                    dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
-                    self.precision_str = "bfloat16" if dtype == torch.bfloat16 else "float16"
-                else:
-                    dtype = torch.float32
-                    self.precision_str = "float32"
+                if self.device is None:
+                    self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
                 self.tokenizer = AutoTokenizer.from_pretrained(
                     self.checkpoint,
                     trust_remote_code=True,
                 )
-                self.model = AutoModelForCausalLM.from_pretrained(
-                    self.checkpoint,
-                    torch_dtype=dtype,
-                    device_map="auto" if torch.cuda.is_available() else None,
-                    trust_remote_code=True,
-                )
-                if not torch.cuda.is_available() and self.device == "cpu":
-                    self.model = self.model.to("cpu")
+
+                if self.device == "cuda" and torch.cuda.is_available():
+                    quantization_config = BitsAndBytesConfig(
+                        load_in_4bit=True,
+                        bnb_4bit_compute_dtype=torch.float16,
+                        bnb_4bit_quant_type="nf4",
+                        bnb_4bit_use_double_quant=True,
+                    )
+                    self.precision_str = "4bit-nf4"
+                    self.model = AutoModelForCausalLM.from_pretrained(
+                        self.checkpoint,
+                        quantization_config=quantization_config,
+                        device_map={"": 0},
+                        trust_remote_code=True,
+                    )
+                else:
+                    raise RuntimeError(
+                        "Real Qwen3-1.7B inference requires CUDA in the current "
+                        "memory-constrained configuration."
+                    )
             except Exception as exc:
                 raise RuntimeError(
-                    f"CRITICAL: Failed to load real model '{self.checkpoint}': {exc}.\n"
+                    f"CRITICAL: Failed to load real model '{self.checkpoint}' on device '{self.device}': {exc}.\n"
                     f"In '--mode real', implicit fallback to mock mode is strictly forbidden to prevent invalid experimental reporting."
                 ) from exc
 
     def generate(
         self,
         prompt: str,
-        max_new_tokens: int = 512,
+        max_new_tokens: int = 256,
         temperature: float = 0.0,
     ) -> tuple[str, int, int, float]:
         t0 = time.perf_counter()
@@ -69,6 +77,9 @@ class Qwen3_4B_Runner:
             return output_text, input_tokens, output_tokens, latency_ms
 
         import torch
+
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
 
         inputs = self.tokenizer(prompt, return_tensors="pt")
         input_len = inputs["input_ids"].shape[1]
