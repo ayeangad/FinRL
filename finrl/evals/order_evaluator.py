@@ -23,6 +23,7 @@ from finrl.rules.metrics import (
 )
 from finrl.rules.order_result import OrderExecutionResult
 from finrl.rules.order_size import classify_order_size
+from finrl.rules.price_improvement import categorize_execution_shares
 from finrl.rules.report import OrderReport
 
 
@@ -136,6 +137,12 @@ def evaluate_order(
         for horizon in RealizedSpreadHorizon
     }
 
+    improved_shares, at_quote_shares, outside_shares = categorize_execution_shares(
+        order.side,
+        executions,
+        quote,
+    )
+
     return OrderReport(
         order_id=order.order_id,
         order_size_bucket=size_bucket,
@@ -163,4 +170,7 @@ def evaluate_order(
         ),
         percentage_quoted_spread=percentage_quoted_spread(quote),
         percentage_realized_spreads=percentage_realized_spreads,
+        shares_price_improved=improved_shares,
+        shares_at_quote=at_quote_shares,
+        shares_outside_quote=outside_shares,
     )

@@ -21,6 +21,9 @@ def make_report(
     percentage_effective_spread: str | None = None,
     percentage_quoted_spread: str | None = None,
     percentage_realized_spreads: dict[RealizedSpreadHorizon, Decimal | None] | None = None,
+    shares_price_improved: str = "0",
+    shares_at_quote: str = "0",
+    shares_outside_quote: str = "0",
 ) -> OrderReport:
     return OrderReport(
         order_id=order_id,
@@ -50,6 +53,9 @@ def make_report(
             else None
         ),
         percentage_realized_spreads=percentage_realized_spreads or {},
+        shares_price_improved=Decimal(shares_price_improved),
+        shares_at_quote=Decimal(shares_at_quote),
+        shares_outside_quote=Decimal(shares_outside_quote),
     )
 
 
@@ -65,6 +71,8 @@ def test_build_category_report_single_report():
         quoted_spread="0.20",
         percentage_effective_spread="0.0005",
         percentage_quoted_spread="0.0020",
+        shares_price_improved="150",
+        shares_at_quote="50",
     )
 
     cat = build_category_report([r1], OrderTypeCategory.MARKET, OrderSizeBucket.SHARES_100_TO_499)
@@ -75,6 +83,13 @@ def test_build_category_report_single_report():
     assert cat.executed_order_count == 1
     assert cat.total_order_quantity == Decimal("200")
     assert cat.total_executed_quantity == Decimal("200")
+    assert cat.num_covered_orders == 1
+    assert cat.num_executed_orders == 1
+    assert cat.cumulative_shares == Decimal("200")
+    assert cat.cumulative_executed_shares == Decimal("200")
+    assert cat.shares_price_improved == Decimal("150")
+    assert cat.shares_at_quote == Decimal("50")
+    assert cat.shares_outside_quote == Decimal("0")
     assert cat.price_improvement == Decimal("0.10")
     assert cat.effective_spread == Decimal("0.05")
     assert cat.quoted_spread == Decimal("0.20")
@@ -83,8 +98,8 @@ def test_build_category_report_single_report():
 
 
 def test_build_category_report_multiple_reports_same_bucket():
-    r1 = make_report("R1", requested_qty="100", executed_qty="100", effective_spread="0.10")
-    r2 = make_report("R2", requested_qty="300", executed_qty="300", effective_spread="0.20")
+    r1 = make_report("R1", requested_qty="100", executed_qty="100", effective_spread="0.10", shares_price_improved="50", shares_at_quote="50")
+    r2 = make_report("R2", requested_qty="300", executed_qty="300", effective_spread="0.20", shares_price_improved="200", shares_outside_quote="100")
 
     cat = build_category_report([r1, r2], OrderTypeCategory.MARKET, OrderSizeBucket.SHARES_100_TO_499)
 
@@ -92,6 +107,9 @@ def test_build_category_report_multiple_reports_same_bucket():
     assert cat.executed_order_count == 2
     assert cat.total_order_quantity == Decimal("400")
     assert cat.total_executed_quantity == Decimal("400")
+    assert cat.shares_price_improved == Decimal("250")
+    assert cat.shares_at_quote == Decimal("50")
+    assert cat.shares_outside_quote == Decimal("100")
     assert cat.effective_spread == Decimal("0.175")
 
 
@@ -217,6 +235,13 @@ def test_empty_category_report():
     assert cat.executed_order_count == 0
     assert cat.total_order_quantity == Decimal("0")
     assert cat.total_executed_quantity == Decimal("0")
+    assert cat.num_covered_orders == 0
+    assert cat.num_executed_orders == 0
+    assert cat.cumulative_shares == Decimal("0")
+    assert cat.cumulative_executed_shares == Decimal("0")
+    assert cat.shares_price_improved == Decimal("0")
+    assert cat.shares_at_quote == Decimal("0")
+    assert cat.shares_outside_quote == Decimal("0")
     assert cat.price_improvement is None
     assert cat.effective_spread is None
     assert cat.quoted_spread is None

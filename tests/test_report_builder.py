@@ -6,6 +6,7 @@ from finrl.rules.horizons import RealizedSpreadHorizon
 from finrl.rules.order_size import OrderSizeBucket
 from finrl.rules.report import OrderReport
 from finrl.rules.report_builder import build_rule_605_report
+from finrl.rules.rule_605_report import Rule605Report
 
 
 def make_report(
@@ -41,17 +42,20 @@ def make_report(
 
 
 def test_build_rule_605_report_empty_input():
-    result = build_rule_605_report([])
+    report = build_rule_605_report([])
 
-    assert len(result) == 30
+    assert isinstance(report, Rule605Report)
+    assert len(report.categories) == 30
+    assert len(report.all_cells()) == 30
+
     all_keys = {
         (cat, size)
         for cat in OrderTypeCategory
         for size in OrderSizeBucket
     }
-    assert set(result.keys()) == all_keys
+    assert set(report.categories.keys()) == all_keys
 
-    for cat in result.values():
+    for cat in report.all_cells():
         assert isinstance(cat, CategoryReport)
         assert cat.order_count == 0
         assert cat.executed_order_count == 0
@@ -94,22 +98,22 @@ def test_build_rule_605_report_mixed_population():
         executed_qty="0",
     )
 
-    result = build_rule_605_report([r1, r2, r3])
+    report = build_rule_605_report([r1, r2, r3])
 
-    assert len(result) == 30
+    assert len(report.categories) == 30
 
-    cat_odd = result[(OrderTypeCategory.MARKET, OrderSizeBucket.ODD_LOT)]
+    cat_odd = report.get_cell(OrderTypeCategory.MARKET, OrderSizeBucket.ODD_LOT)
     assert cat_odd.order_count == 1
     assert cat_odd.total_executed_quantity == Decimal("50")
     assert cat_odd.effective_spread == Decimal("0.10")
 
-    cat_100 = result[(OrderTypeCategory.MARKETABLE_LIMIT, OrderSizeBucket.SHARES_100_TO_499)]
+    cat_100 = report.get_cell(OrderTypeCategory.MARKETABLE_LIMIT, OrderSizeBucket.SHARES_100_TO_499)
     assert cat_100.order_count == 1  # r3 excluded because reportable=False
     assert cat_100.total_executed_quantity == Decimal("200")
     assert cat_100.effective_spread == Decimal("0.20")
 
     # Remaining buckets empty
-    assert result[(OrderTypeCategory.MARKET, OrderSizeBucket.SHARES_500_TO_1999)].order_count == 0
+    assert report.get_cell(OrderTypeCategory.MARKET, OrderSizeBucket.SHARES_500_TO_1999).order_count == 0
 
 
 def test_build_rule_605_report_unexecuted_reportable_order():
@@ -131,9 +135,9 @@ def test_build_rule_605_report_unexecuted_reportable_order():
         executed_qty="0",  # unexecuted reportable order
     )
 
-    result = build_rule_605_report([r1, r2])
+    report = build_rule_605_report([r1, r2])
 
-    cat = result[(OrderTypeCategory.MARKETABLE_LIMIT, OrderSizeBucket.SHARES_100_TO_499)]
+    cat = report.get_cell(OrderTypeCategory.MARKETABLE_LIMIT, OrderSizeBucket.SHARES_100_TO_499)
     assert cat.order_count == 2
     assert cat.executed_order_count == 1
     assert cat.total_order_quantity == Decimal("200")
@@ -159,12 +163,12 @@ def test_build_rule_605_report_different_categories_land_in_different_cells():
         effective_spread="0.05",
     )
 
-    result = build_rule_605_report([r1, r2])
+    report = build_rule_605_report([r1, r2])
 
-    cat1 = result[(OrderTypeCategory.MARKET, OrderSizeBucket.SHARES_100_TO_499)]
+    cat1 = report.get_cell(OrderTypeCategory.MARKET, OrderSizeBucket.SHARES_100_TO_499)
     assert cat1.order_count == 1
     assert cat1.effective_spread == Decimal("0.10")
 
-    cat2 = result[(OrderTypeCategory.MIDPOINT_OR_BETTER_LIMIT, OrderSizeBucket.SHARES_100_TO_499)]
+    cat2 = report.get_cell(OrderTypeCategory.MIDPOINT_OR_BETTER_LIMIT, OrderSizeBucket.SHARES_100_TO_499)
     assert cat2.order_count == 1
     assert cat2.effective_spread == Decimal("0.05")

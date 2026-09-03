@@ -14,6 +14,9 @@ from finrl.rules.report_statistics import (
     share_weighted_price_improvement,
     share_weighted_quoted_spread,
     share_weighted_realized_spread,
+    sum_shares_at_quote,
+    sum_shares_outside_quote,
+    sum_shares_price_improved,
 )
 
 
@@ -24,6 +27,15 @@ class CategoryReport(BaseModel):
     executed_order_count: int = Field(ge=0)
     total_order_quantity: Decimal = Field(ge=0)
     total_executed_quantity: Decimal = Field(ge=0)
+
+    num_covered_orders: int = Field(ge=0)
+    num_executed_orders: int = Field(ge=0)
+    cumulative_shares: Decimal = Field(ge=0)
+    cumulative_executed_shares: Decimal = Field(ge=0)
+
+    shares_price_improved: Decimal = Field(default=Decimal("0"), ge=0)
+    shares_at_quote: Decimal = Field(default=Decimal("0"), ge=0)
+    shares_outside_quote: Decimal = Field(default=Decimal("0"), ge=0)
 
     price_improvement: Decimal | None = None
     effective_spread: Decimal | None = None
@@ -89,6 +101,13 @@ def build_category_report(
         executed_order_count=executed_order_count,
         total_order_quantity=total_order_quantity,
         total_executed_quantity=total_executed_quantity,
+        num_covered_orders=order_count,
+        num_executed_orders=executed_order_count,
+        cumulative_shares=total_order_quantity,
+        cumulative_executed_shares=total_executed_quantity,
+        shares_price_improved=sum_shares_price_improved(bucket_reports),
+        shares_at_quote=sum_shares_at_quote(bucket_reports),
+        shares_outside_quote=sum_shares_outside_quote(bucket_reports),
         price_improvement=share_weighted_price_improvement(bucket_reports),
         effective_spread=share_weighted_effective_spread(bucket_reports),
         quoted_spread=share_weighted_quoted_spread(bucket_reports),

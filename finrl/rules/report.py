@@ -35,3 +35,7 @@ class OrderReport(BaseModel):
     percentage_realized_spreads: dict[RealizedSpreadHorizon, Decimal | None] = Field(
         default_factory=dict
     )
+
+    shares_price_improved: Decimal = Field(default=Decimal("0"), ge=0)
+    shares_at_quote: Decimal = Field(default=Decimal("0"), ge=0)
+    shares_outside_quote: Decimal = Field(default=Decimal("0"), ge=0)
