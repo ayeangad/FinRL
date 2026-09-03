@@ -186,8 +186,6 @@ def test_untriggered_stop_order_raises_error():
 
 
 def test_buy_non_marketable_limit_becomes_executable_when_bid_reaches_limit():
-    # Receipt quote: 99.80 / 99.90 -> BUY limit 100.00 is marketable at receipt!
-    # Let's test non-marketable at receipt: BUY limit 99.85 when receipt is 99.70 / 99.90.
     received_at = datetime.fromisoformat("2026-09-01T10:30:00.100")
     order = Order(
         order_id="ORD-LIMIT-BUY",
@@ -195,14 +193,14 @@ def test_buy_non_marketable_limit_becomes_executable_when_bid_reaches_limit():
         side=OrderSide.BUY,
         order_type=OrderType.LIMIT,
         quantity=Decimal("100"),
-        limit_price=Decimal("99.85"),
+        limit_price=Decimal("99.60"),  # out-of-the-money limit (below receipt bid 99.70)
         received_at=received_at,
     )
 
     market = MarketState(
         security="FINRL",
         quotes=[
-            # Receipt quote: 99.70 bid / 99.90 ask -> non-marketable at receipt (limit 99.85 < ask 99.90)
+            # Receipt quote: 99.70 bid / 99.90 ask -> non-marketable & non-executable (limit 99.60 < bid 99.70)
             Quote(
                 security="FINRL",
                 bid_price=Decimal("99.70"),
@@ -211,21 +209,21 @@ def test_buy_non_marketable_limit_becomes_executable_when_bid_reaches_limit():
                 ask_size=Decimal("300"),
                 timestamp=received_at,
             ),
-            # T+100ms: 99.80 bid / 99.95 ask -> still bid 99.80 < limit 99.85
+            # T+100ms: 99.65 bid / 99.85 ask -> still bid 99.65 > limit 99.60
             Quote(
                 security="FINRL",
-                bid_price=Decimal("99.80"),
+                bid_price=Decimal("99.65"),
                 bid_size=Decimal("500"),
-                ask_price=Decimal("99.95"),
+                ask_price=Decimal("99.85"),
                 ask_size=Decimal("300"),
                 timestamp=datetime.fromisoformat("2026-09-01T10:30:00.200"),
             ),
-            # T+200ms: 99.85 bid / 100.00 ask -> bid 99.85 >= limit 99.85 -> EXECUTABLE!
+            # T+200ms: 99.60 bid / 99.80 ask -> limit 99.60 >= bid 99.60 -> EXECUTABLE!
             Quote(
                 security="FINRL",
-                bid_price=Decimal("99.85"),
+                bid_price=Decimal("99.60"),
                 bid_size=Decimal("500"),
-                ask_price=Decimal("100.00"),
+                ask_price=Decimal("99.80"),
                 ask_size=Decimal("300"),
                 timestamp=datetime.fromisoformat("2026-09-01T10:30:00.300"),
             ),
@@ -243,14 +241,14 @@ def test_sell_non_marketable_limit_becomes_executable_when_ask_reaches_limit():
         side=OrderSide.SELL,
         order_type=OrderType.LIMIT,
         quantity=Decimal("100"),
-        limit_price=Decimal("100.10"),
+        limit_price=Decimal("100.30"),  # out-of-the-money limit (above receipt ask 100.20)
         received_at=received_at,
     )
 
     market = MarketState(
         security="FINRL",
         quotes=[
-            # Receipt quote: 99.90 bid / 100.20 ask -> non-marketable at receipt (limit 100.10 > bid 99.90)
+            # Receipt quote: 99.90 bid / 100.20 ask -> non-marketable & non-executable (limit 100.30 > ask 100.20)
             Quote(
                 security="FINRL",
                 bid_price=Decimal("99.90"),
@@ -259,21 +257,21 @@ def test_sell_non_marketable_limit_becomes_executable_when_ask_reaches_limit():
                 ask_size=Decimal("300"),
                 timestamp=received_at,
             ),
-            # T+100ms: 99.95 bid / 100.15 ask -> ask 100.15 > limit 100.10
+            # T+100ms: 99.95 bid / 100.25 ask -> ask 100.25 < limit 100.30
             Quote(
                 security="FINRL",
                 bid_price=Decimal("99.95"),
                 bid_size=Decimal("500"),
-                ask_price=Decimal("100.15"),
+                ask_price=Decimal("100.25"),
                 ask_size=Decimal("300"),
                 timestamp=datetime.fromisoformat("2026-09-01T10:30:00.200"),
             ),
-            # T+200ms: 100.00 bid / 100.10 ask -> ask 100.10 <= limit 100.10 -> EXECUTABLE!
+            # T+200ms: 100.00 bid / 100.30 ask -> limit 100.30 <= ask 100.30 -> EXECUTABLE!
             Quote(
                 security="FINRL",
                 bid_price=Decimal("100.00"),
                 bid_size=Decimal("500"),
-                ask_price=Decimal("100.10"),
+                ask_price=Decimal("100.30"),
                 ask_size=Decimal("300"),
                 timestamp=datetime.fromisoformat("2026-09-01T10:30:00.300"),
             ),
@@ -292,7 +290,7 @@ def test_stop_limit_requires_both_trigger_and_limit_executability():
         order_type=OrderType.STOP_LIMIT,
         quantity=Decimal("100"),
         stop_price=Decimal("100.00"),
-        limit_price=Decimal("99.90"),  # non-marketable limit when triggered at 100.00 ask
+        limit_price=Decimal("99.70"),  # limit 99.70 < bid 99.75 when triggered at 0.200
         received_at=received_at,
     )
 
@@ -309,7 +307,7 @@ def test_stop_limit_requires_both_trigger_and_limit_executability():
                 timestamp=received_at,
             ),
             # T+100ms: 99.75 bid / 100.05 ask -> TRIGGERED (ask 100.05 >= stop 100.00).
-            # But limit check: bid 99.75 < limit 99.90 and ask 100.05 > limit 99.90 -> limit NOT executable yet.
+            # But limit check: limit 99.70 < bid 99.75 -> limit NOT executable yet.
             Quote(
                 security="FINRL",
                 bid_price=Decimal("99.75"),
@@ -318,10 +316,10 @@ def test_stop_limit_requires_both_trigger_and_limit_executability():
                 ask_size=Decimal("300"),
                 timestamp=datetime.fromisoformat("2026-09-01T10:30:00.200"),
             ),
-            # T+200ms: 99.90 bid / 100.10 ask -> bid 99.90 >= limit 99.90 -> EXECUTABLE!
+            # T+200ms: 99.70 bid / 100.10 ask -> limit 99.70 >= bid 99.70 -> EXECUTABLE!
             Quote(
                 security="FINRL",
-                bid_price=Decimal("99.90"),
+                bid_price=Decimal("99.70"),
                 bid_size=Decimal("500"),
                 ask_price=Decimal("100.10"),
                 ask_size=Decimal("300"),

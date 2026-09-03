@@ -36,15 +36,9 @@ def executable_time(
                 continue
 
             if order.side == OrderSide.BUY:
-                executable = (
-                    quote.bid_price >= order.limit_price
-                    or quote.ask_price <= order.limit_price
-                )
+                executable = order.limit_price >= quote.bid_price
             else:
-                executable = (
-                    quote.ask_price <= order.limit_price
-                    or quote.bid_price >= order.limit_price
-                )
+                executable = order.limit_price <= quote.ask_price
 
             if executable:
                 return quote.timestamp
@@ -98,15 +92,9 @@ def executable_time(
 
             if trigger_time is not None:
                 if order.side == OrderSide.BUY:
-                    executable = (
-                        quote.bid_price >= order.limit_price
-                        or quote.ask_price <= order.limit_price
-                    )
+                    executable = order.limit_price >= quote.bid_price
                 else:
-                    executable = (
-                        quote.ask_price <= order.limit_price
-                        or quote.bid_price >= order.limit_price
-                    )
+                    executable = order.limit_price <= quote.ask_price
 
                 if executable:
                     return quote.timestamp
@@ -115,6 +103,7 @@ def executable_time(
             raise ValueError("Stop-limit order was not triggered")
 
         raise ValueError("Stop-limit order limit was not executable")
+
 
     raise ValueError(f"Unsupported order type: {order.order_type}")
 
