@@ -98,12 +98,14 @@ class Qwen4BAgent(BaseAgent):
     def __init__(
         self,
         mode: str = "mock",
+        checkpoint: str = "Qwen/Qwen3-4B-Instruct",
         runner: Qwen3_4B_Runner | None = None,
         prompt_path: Path | str = "prompts/rule_605_v1.txt",
         traces_dir: Path | str = "traces",
     ):
         self.mode = mode.lower()
-        self.runner = runner or Qwen3_4B_Runner(mode=self.mode)
+        self.checkpoint = checkpoint
+        self.runner = runner or Qwen3_4B_Runner(checkpoint=self.checkpoint, mode=self.mode)
         self.prompt_path = Path(prompt_path)
         self.traces_dir = Path(traces_dir)
         self.system_prompt = (
@@ -201,7 +203,7 @@ class Qwen4BAgent(BaseAgent):
             schema_version="v1",
             scenario_id=obs.scenario_id,
             model_name=self.name,
-            model_revision="qwen3-4b-instruct",
+            model_revision=self.checkpoint,
             prompt_version="rule_605_v1",
             started_at=started_at,
             completed_at=completed_at,

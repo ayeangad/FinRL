@@ -6,11 +6,11 @@ from typing import Any
 class Qwen3_4B_Runner:
     def __init__(
         self,
-        model_name_or_path: str = "Qwen/Qwen3-4B-Instruct",
+        checkpoint: str = "Qwen/Qwen3-4B-Instruct",
         device: str | None = None,
         mode: str = "mock",
     ):
-        self.model_name_or_path = model_name_or_path
+        self.checkpoint = checkpoint
         self.mode = mode.lower()
         self.device = device
         self.tokenizer: Any = None
@@ -36,11 +36,11 @@ class Qwen3_4B_Runner:
                     self.precision_str = "float32"
 
                 self.tokenizer = AutoTokenizer.from_pretrained(
-                    self.model_name_or_path,
+                    self.checkpoint,
                     trust_remote_code=True,
                 )
                 self.model = AutoModelForCausalLM.from_pretrained(
-                    self.model_name_or_path,
+                    self.checkpoint,
                     torch_dtype=dtype,
                     device_map="auto" if torch.cuda.is_available() else None,
                     trust_remote_code=True,
@@ -49,7 +49,7 @@ class Qwen3_4B_Runner:
                     self.model = self.model.to("cpu")
             except Exception as exc:
                 raise RuntimeError(
-                    f"CRITICAL: Failed to load real model '{self.model_name_or_path}': {exc}.\n"
+                    f"CRITICAL: Failed to load real model '{self.checkpoint}': {exc}.\n"
                     f"In '--mode real', implicit fallback to mock mode is strictly forbidden to prevent invalid experimental reporting."
                 ) from exc
 

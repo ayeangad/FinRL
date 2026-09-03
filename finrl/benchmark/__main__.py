@@ -23,6 +23,12 @@ def main():
         help="Execution mode: 'real' (loads PyTorch model weights) or 'mock' (deterministic test agent)",
     )
     parser.add_argument(
+        "--checkpoint",
+        type=str,
+        default="Qwen/Qwen3-4B-Instruct",
+        help="HuggingFace model ID or local path to model checkpoint",
+    )
+    parser.add_argument(
         "--scenarios",
         type=str,
         default="scenarios/v0.1/golden",
@@ -42,10 +48,10 @@ def main():
         agent = BrokenAgent()
         weights_str = "NONE (broken logic)"
     elif args.model == "qwen3_4b":
-        agent = Qwen4BAgent(mode=args.mode)
+        agent = Qwen4BAgent(mode=args.mode, checkpoint=args.checkpoint)
         device_str = agent.runner.device or "cpu"
         precision_str = agent.runner.precision_str
-        weights_str = agent.runner.model_name_or_path if args.mode == "real" else "NONE (mock)"
+        weights_str = agent.runner.checkpoint if args.mode == "real" else "NONE (mock)"
     else:
         raise ValueError(f"Unknown model agent: {args.model}")
 
