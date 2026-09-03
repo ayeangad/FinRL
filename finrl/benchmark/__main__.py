@@ -1,7 +1,12 @@
 import argparse
 from pathlib import Path
 
-from finrl.benchmark.agent import BrokenAgent, Qwen4BAgent, ReferenceAgent
+from finrl.benchmark.agent import (
+    BrokenAgent,
+    OpenAIAgent,
+    Qwen1_7BAgent,
+    ReferenceAgent,
+)
 from finrl.benchmark.config import BenchmarkConfig
 from finrl.benchmark.runner import BenchmarkRunner
 
@@ -12,8 +17,8 @@ def main():
         "--model",
         type=str,
         default="reference",
-        choices=["reference", "broken", "qwen3_4b"],
-        help="Agent model to evaluate (reference, broken, qwen3_4b)",
+        choices=["reference", "broken", "qwen3_1_7b", "openai"],
+        help="Agent model to evaluate (reference, broken, qwen3_1_7b, openai)",
     )
     parser.add_argument(
         "--mode",
@@ -25,14 +30,27 @@ def main():
     parser.add_argument(
         "--checkpoint",
         type=str,
-        default="Qwen/Qwen3-4B-Instruct",
+        default="Qwen/Qwen3-1.7B",
         help="HuggingFace model ID or local path to model checkpoint",
+    )
+    parser.add_argument(
+        "--device",
+        type=str,
+        default=None,
+        choices=["cuda", "cpu"],
+        help="Target inference device: 'cuda' or 'cpu'",
     )
     parser.add_argument(
         "--scenarios",
         type=str,
         default="scenarios/v0.1/golden",
         help="Directory path containing scenario .json files",
+    )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="Limit number of scenarios to execute for fast smoke testing (e.g. --limit 1)",
     )
 
     args = parser.parse_args()
@@ -47,15 +65,20 @@ def main():
     elif args.model == "broken":
         agent = BrokenAgent()
         weights_str = "NONE (broken logic)"
-    elif args.model == "qwen3_4b":
-        agent = Qwen4BAgent(mode=args.mode, checkpoint=args.checkpoint)
+    elif args.model == "qwen3_1_7b":
+        agent = Qwen1_7BAgent(mode=args.mode, checkpoint=args.checkpoint, device=args.device)
         device_str = agent.runner.device or "cpu"
         precision_str = agent.runner.precision_str
+        weights_str = agent.runner.checkpoint if args.mode == "real" else "NONE (mock)"
+    elif args.model == "openai":
+        agent = OpenAIAgent(mode=args.mode, checkpoint=args.checkpoint, device=args.device)
+        device_str = "api"
+        precision_str = "api"
         weights_str = agent.runner.checkpoint if args.mode == "real" else "NONE (mock)"
     else:
         raise ValueError(f"Unknown model agent: {args.model}")
 
-    config = BenchmarkConfig(scenarios_dir=Path(args.scenarios))
+    config = BenchmarkConfig(scenarios_dir=Path(args.scenarios), limit=args.limit)
     runner = BenchmarkRunner(config)
 
     print("\n" + "=" * 60)
@@ -66,11 +89,11 @@ def main():
     print(f"Device:      {device_str}")
     print(f"Precision:   {precision_str}")
     print(f"Weights:     {weights_str}")
-    print(f"Scenarios:   100")
-    print(f"Prompt:      rule_605_v1")
+    print(f"Scenarios:   {args.limit if args.limit else '100'}")
+    print("Prompt:      rule_605_v1")
     print("=" * 60 + "\n")
 
-    result = runner.run_benchmark(agent)
+    result = runner.run_benchmark(agent, limit=args.limit)
 
     print("-" * 60)
     print("           FINRL RULE 605 BENCHMARK RESULTS")
