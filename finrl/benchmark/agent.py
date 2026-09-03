@@ -153,7 +153,7 @@ class Qwen1_7BAgent(BaseAgent):
             # Inference call
             raw_output, in_tok, out_tok, lat_ms = self.runner.generate(
                 prompt,
-                max_new_tokens=512,
+                max_new_tokens=2048,
                 temperature=0.0,
             )
 
@@ -293,7 +293,7 @@ class OpenAIAgent(BaseAgent):
             # Inference call
             raw_output, in_tok, out_tok, lat_ms = self.runner.generate(
                 prompt,
-                max_new_tokens=512,
+                max_new_tokens=2048,
                 temperature=0.0,
             )
 
