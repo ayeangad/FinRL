@@ -11,6 +11,7 @@ def make_limit_order_scenario(
     security: str,
     side: OrderSide,
     quantity: Decimal,
+    execution_quantity: Decimal,
     limit_price: Decimal,
     bid_price: Decimal,
     ask_price: Decimal,
@@ -42,16 +43,19 @@ def make_limit_order_scenario(
             }
         ]
         ,
-        "executions": [
+    "executions": (
+        [
             {
                 "execution_id": f"{scenario_id}-EXECUTION",
                 "order_id": f"{scenario_id}-ORDER",
                 "price": str(execution_price),
-                "quantity": str(quantity),
+                "quantity": str(execution_quantity),
                 "executed_at": executed_at.isoformat(),
             }
-        ],
-        "expected": {},
+        ]
+        if execution_quantity > 0
+        else []
+    ),
     }
 
 
