@@ -1,13 +1,9 @@
 from datetime import datetime
 from decimal import Decimal
-from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from finrl.domain.execution import Execution
-from finrl.domain.market import MarketState
-from finrl.domain.order import Order, OrderSide, OrderType
-from finrl.domain.quote import Quote
+from finrl.domain.order import OrderSide, OrderType
 
 
 class OrderInput(BaseModel):

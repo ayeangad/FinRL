@@ -1,9 +1,10 @@
 from datetime import datetime
 from decimal import Decimal
 
-from finrl.domain.order import Order, OrderSide, OrderType
+from finrl.domain.order import OrderSide, OrderType
 from finrl.evals.order_evaluator import evaluate_order
-from finrl.scenarios import load_executions, load_market, load_order, validate_scenario
+from finrl.scenarios import load_executions, load_market, load_order
+
 
 def make_limit_order_scenario(
     *,

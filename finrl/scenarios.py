@@ -105,7 +105,7 @@ def validate_scenario(scenario: dict) -> None:
 
     total_executed_quantity = sum(
         (execution.quantity for execution in executions),
-        Decimal("0"),
+        Decimal(0),
     )
 
     for execution in executions:

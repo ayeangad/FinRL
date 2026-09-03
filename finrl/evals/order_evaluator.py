@@ -13,9 +13,7 @@ from finrl.rules.execution_context import (
 )
 from finrl.rules.horizons import RealizedSpreadHorizon
 from finrl.rules.metrics import (
-    effective_spread,
     percentage_quoted_spread,
-    price_improvement,
     quoted_spread,
     share_weighted_effective_spread,
     share_weighted_percentage_effective_spread,
