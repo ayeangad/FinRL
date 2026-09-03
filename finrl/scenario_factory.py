@@ -13,8 +13,7 @@ def make_limit_order_scenario(
     quantity: Decimal,
     executions: list[tuple[Decimal, Decimal, datetime]],
     limit_price: Decimal,
-    bid_price: Decimal,
-    ask_price: Decimal,
+    quotes: list[tuple[datetime, Decimal, Decimal, Decimal, Decimal]],
 ) -> dict:
     received_at = datetime.fromisoformat("2026-09-01T10:30:00.100")
 
@@ -30,17 +29,10 @@ def make_limit_order_scenario(
             "limit_price":str(limit_price),
             "received_at": received_at.isoformat(),
         },
-        "quotes" : [
-            {
-                "security" : security,
-                "bid_price" : str(bid_price),
-                "bid_size" : str(quantity),
-                "ask_price" : str(ask_price),
-                "ask_size" : str(quantity),
-                "timestamp" : received_at.isoformat(),
-            }
-        ]
-        ,
+        "quotes": make_market_timeline(
+            security=security,
+            quotes=quotes,
+        ),
         "executions": [
             {
                 "execution_id": f"{scenario_id}-EXECUTION-{index + 1:03d}",
@@ -78,3 +70,20 @@ def make_limit_order_scenario(
 
     return scenario
 
+
+def make_market_timeline(
+    *,
+    security: str,
+    quotes: list[tuple[datetime, Decimal, Decimal, Decimal, Decimal]],
+) -> list[dict]:
+    return [
+        {
+            "security": security,
+            "bid_price": str(bid_price),
+            "bid_size": str(bid_size),
+            "ask_price": str(ask_price),
+            "ask_size": str(ask_size),
+            "timestamp": timestamp.isoformat(),
+        }
+        for timestamp, bid_price, bid_size, ask_price, ask_size in quotes
+    ]
