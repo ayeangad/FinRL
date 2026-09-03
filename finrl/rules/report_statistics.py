@@ -87,19 +87,19 @@ def share_weighted_percentage_realized_spread(
 def sum_shares_price_improved(reports: list[OrderReport]) -> Decimal:
     return sum(
         (r.shares_price_improved for r in reports if r.reportable),
-        Decimal("0"),
+        Decimal(0),
     )
 
 
 def sum_shares_at_quote(reports: list[OrderReport]) -> Decimal:
     return sum(
         (r.shares_at_quote for r in reports if r.reportable),
-        Decimal("0"),
+        Decimal(0),
     )
 
 
 def sum_shares_outside_quote(reports: list[OrderReport]) -> Decimal:
     return sum(
         (r.shares_outside_quote for r in reports if r.reportable),
-        Decimal("0"),
+        Decimal(0),
     )

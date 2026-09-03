@@ -4,6 +4,7 @@ from enum import Enum
 
 from pydantic import BaseModel, Field
 
+
 class OrderSide(str, Enum):
     BUY = "buy"
     SELL = "sell"

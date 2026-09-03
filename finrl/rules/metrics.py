@@ -7,7 +7,7 @@ from finrl.rules.aggregation import share_weighted_average
 
 
 def midpoint(quote: Quote) -> Decimal:
-    return (quote.bid_price + quote.ask_price) / Decimal("2")
+    return (quote.bid_price + quote.ask_price) / Decimal(2)
 
 
 def quoted_spread(quote: Quote) -> Decimal:
@@ -30,7 +30,7 @@ def effective_spread(
     execution_price: Decimal,
     quote: Quote,
 ) -> Decimal:
-    return Decimal("2") * abs(
+    return Decimal(2) * abs(
         execution_price - midpoint(quote)
     )
 
@@ -75,9 +75,9 @@ def realized_spread(
     future_midpoint = midpoint(future_quote)
 
     if side == OrderSide.BUY:
-        return Decimal("2") * (execution_price - future_midpoint)
+        return Decimal(2) * (execution_price - future_midpoint)
 
-    return Decimal("2") * (future_midpoint - execution_price)
+    return Decimal(2) * (future_midpoint - execution_price)
 
 
 def share_weighted_realized_spread(

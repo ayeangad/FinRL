@@ -3,6 +3,7 @@ from decimal import Decimal
 
 from pydantic import BaseModel, Field
 
+
 class Quote(BaseModel):
     security: str
     

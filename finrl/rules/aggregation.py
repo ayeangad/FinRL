@@ -8,7 +8,7 @@ def total_executed_quantity(
 ) -> Decimal:
     return sum(
         (execution.quantity for execution in executions),
-        Decimal("0"),
+        Decimal(0),
     )
 
 
@@ -28,7 +28,7 @@ def volume_weighted_average_execution_price(
             execution.price * execution.quantity
             for execution in executions
         ),
-        Decimal("0"),
+        Decimal(0),
     )
 
     return total_value / total_quantity
@@ -42,7 +42,7 @@ def share_weighted_average(
 
     total_quantity = sum(
         (quantity for _, quantity in values),
-        Decimal("0"),
+        Decimal(0),
     )
 
     if total_quantity == 0:
@@ -53,7 +53,7 @@ def share_weighted_average(
             value * quantity
             for value, quantity in values
         ),
-        Decimal("0"),
+        Decimal(0),
     )
 
     return total_weighted_value / total_quantity

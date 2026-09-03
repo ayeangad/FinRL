@@ -3,6 +3,7 @@ from decimal import Decimal
 
 from pydantic import BaseModel, Field
 
+
 class Execution(BaseModel):
     order_id: str
     execution_id: str

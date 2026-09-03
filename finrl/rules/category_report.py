@@ -33,9 +33,9 @@ class CategoryReport(BaseModel):
     cumulative_shares: Decimal = Field(ge=0)
     cumulative_executed_shares: Decimal = Field(ge=0)
 
-    shares_price_improved: Decimal = Field(default=Decimal("0"), ge=0)
-    shares_at_quote: Decimal = Field(default=Decimal("0"), ge=0)
-    shares_outside_quote: Decimal = Field(default=Decimal("0"), ge=0)
+    shares_price_improved: Decimal = Field(default=Decimal(0), ge=0)
+    shares_at_quote: Decimal = Field(default=Decimal(0), ge=0)
+    shares_outside_quote: Decimal = Field(default=Decimal(0), ge=0)
 
     price_improvement: Decimal | None = None
     effective_spread: Decimal | None = None
@@ -77,11 +77,11 @@ def build_category_report(
 
     total_order_quantity = sum(
         (report.requested_quantity for report in bucket_reports),
-        Decimal("0"),
+        Decimal(0),
     )
     total_executed_quantity = sum(
         (report.executed_quantity for report in bucket_reports),
-        Decimal("0"),
+        Decimal(0),
     )
 
     realized_spreads = {

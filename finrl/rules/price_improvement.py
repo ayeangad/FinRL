@@ -39,9 +39,9 @@ def categorize_execution_shares(
     receipt_quote: Quote,
 ) -> tuple[Decimal, Decimal, Decimal]:
     """Returns (shares_price_improved, shares_at_quote, shares_outside_quote)."""
-    improved = Decimal("0")
-    at_quote = Decimal("0")
-    outside = Decimal("0")
+    improved = Decimal(0)
+    at_quote = Decimal(0)
+    outside = Decimal(0)
 
     for ex in executions:
         cat = classify_execution_price_improvement(side, ex.price, receipt_quote)

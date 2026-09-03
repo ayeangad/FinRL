@@ -1,4 +1,4 @@
-from finrl.rules.category_report import CategoryReport, build_category_report
+from finrl.rules.category_report import build_category_report
 from finrl.rules.classification import OrderTypeCategory
 from finrl.rules.order_size import OrderSizeBucket
 from finrl.rules.report import OrderReport

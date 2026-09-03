@@ -70,7 +70,7 @@ def classify_order_category(
 
     bid_price = receipt_quote.bid_price
     ask_price = receipt_quote.ask_price
-    midpoint = (bid_price + ask_price) / Decimal("2")
+    midpoint = (bid_price + ask_price) / Decimal(2)
 
     if order.side == OrderSide.BUY:
         if order.limit_price >= ask_price:
