@@ -31,4 +31,10 @@ def test_make_limit_order_scenario():
     assert scenario["executions"][0]["quantity"] == "100"
     assert scenario["executions"][0]["price"] == "100.00"
 
-    assert scenario["expected"] == {}
+    assert scenario["expected"] == {
+        "executed_quantity": "100",
+        "average_execution_price": "100.00",
+        "quoted_spread": "0.20",
+        "price_improvement": "0.10",
+        "effective_spread": "0.00",
+    }
