@@ -1,4 +1,3 @@
-from typing import Any
 from pydantic import BaseModel, Field
 
 from finrl.rules.serializer import PIPE_DELIMITED_HEADER

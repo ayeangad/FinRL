@@ -1,7 +1,6 @@
-import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+
 from pydantic import BaseModel, Field
 
 from finrl.benchmark.evaluator import evaluate_submission
@@ -21,7 +20,7 @@ class ScenarioFailureAnalysis(BaseModel):
 
 class BaselineReport(BaseModel):
     title: str = "FinRL Phase 9 Zero-Shot Baseline Report"
-    generated_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    generated_at: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
     model_name: str
     model_revision: str
     prompt_version: str
@@ -113,7 +112,7 @@ def generate_baseline_report(
     output_dir: Path | str = "experiments/phase_9",
 ) -> BaselineReport:
     t_dir = Path(traces_dir)
-    trace_files = sorted(list(t_dir.glob("*.json")))
+    trace_files = sorted(t_dir.glob("*.json"))
 
     if not trace_files:
         raise ValueError(f"No trace JSON files found in {t_dir}")

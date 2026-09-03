@@ -1,7 +1,7 @@
 import math
 import time
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Sequence
 
 from finrl.benchmark.agent import BaseAgent
 from finrl.benchmark.config import BenchmarkConfig
@@ -32,9 +32,16 @@ class BenchmarkRunner:
         self,
         agent: BaseAgent,
         scenarios_dir: Path | str | None = None,
+        limit: int | None = None,
     ) -> BenchmarkResult:
         s_dir = Path(scenarios_dir) if scenarios_dir else self.config.scenarios_dir
-        scenario_files = sorted(list(s_dir.glob("*.json")))
+        scenario_files = sorted(s_dir.glob("*.json"))
+
+        max_limit = limit if limit is not None else self.config.limit
+        if max_limit is not None:
+            if max_limit <= 0:
+                raise ValueError("Limit must be a positive integer greater than 0")
+            scenario_files = scenario_files[:max_limit]
 
         if not scenario_files:
             raise ValueError(f"No scenario .json files found in {s_dir}")

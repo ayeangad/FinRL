@@ -1,6 +1,7 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
 from pydantic import BaseModel, Field
 
 
@@ -21,8 +22,8 @@ class AgentTrace(BaseModel):
     model_name: str
     model_revision: str = "default"
     prompt_version: str = "rule_605_v1"
-    started_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    completed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    started_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    completed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     steps: list[StepTrace] = Field(default_factory=list)
     submission: str | None = None
     evaluation: dict[str, Any] = Field(default_factory=dict)

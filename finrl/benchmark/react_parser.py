@@ -1,7 +1,8 @@
 import json
 import re
 from typing import Any
-from pydantic import BaseModel
+
+from pydantic import BaseModel, ValidationError
 
 from finrl.env.tools import ToolAction
 
@@ -98,7 +99,7 @@ def parse_react_output(raw_output: str) -> ParseResult:
         return ParseResult(
             thought=thought,
             action_dict=data,
-            error=f"Unknown or missing tool_name '{tool_name}'. Must be one of {sorted(list(ALLOWED_TOOLS))}.",
+            error=f"Unknown or missing tool_name '{tool_name}'. Must be one of {sorted(ALLOWED_TOOLS)}.",
         )
 
     arguments = data.get("arguments", {})
@@ -117,7 +118,7 @@ def parse_react_output(raw_output: str) -> ParseResult:
             tool_action=tool_action,
             error=None,
         )
-    except Exception as exc:
+    except ValidationError as exc:
         return ParseResult(
             thought=thought,
             action_dict=data,
