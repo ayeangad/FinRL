@@ -6,6 +6,9 @@ from finrl.rules.order_size import OrderSizeBucket
 from finrl.rules.report import OrderReport
 from finrl.rules.report_statistics import (
     share_weighted_effective_spread,
+    share_weighted_percentage_effective_spread,
+    share_weighted_percentage_quoted_spread,
+    share_weighted_percentage_realized_spread,
     share_weighted_price_improvement,
     share_weighted_quoted_spread,
     share_weighted_realized_spread,
@@ -20,6 +23,9 @@ def make_report(
     effective_spread: str | None = None,
     quoted_spread: str | None = None,
     realized_spreads: dict[RealizedSpreadHorizon, Decimal | None] | None = None,
+    percentage_effective_spread: str | None = None,
+    percentage_quoted_spread: str | None = None,
+    percentage_realized_spreads: dict[RealizedSpreadHorizon, Decimal | None] | None = None,
 ) -> OrderReport:
     return OrderReport(
         order_id=order_id,
@@ -38,6 +44,17 @@ def make_report(
             Decimal(quoted_spread) if quoted_spread is not None else None
         ),
         realized_spreads=realized_spreads or {},
+        percentage_effective_spread=(
+            Decimal(percentage_effective_spread)
+            if percentage_effective_spread is not None
+            else None
+        ),
+        percentage_quoted_spread=(
+            Decimal(percentage_quoted_spread)
+            if percentage_quoted_spread is not None
+            else None
+        ),
+        percentage_realized_spreads=percentage_realized_spreads or {},
     )
 
 
@@ -81,6 +98,9 @@ def test_empty_population_returns_none():
     assert share_weighted_effective_spread([]) is None
     assert share_weighted_quoted_spread([]) is None
     assert share_weighted_realized_spread([], RealizedSpreadHorizon.MS_50) is None
+    assert share_weighted_percentage_effective_spread([]) is None
+    assert share_weighted_percentage_quoted_spread([]) is None
+    assert share_weighted_percentage_realized_spread([], RealizedSpreadHorizon.MS_50) is None
 
 
 def test_realized_spread_multiple_horizons():
@@ -109,3 +129,42 @@ def test_realized_spread_multiple_horizons():
 
     # 15s RS: both empty -> None
     assert share_weighted_realized_spread([r1, r2], RealizedSpreadHorizon.S_15) is None
+
+
+def test_percentage_spread_aggregation_different_midpoints():
+    # R1: stock at $10.00, ES=$0.10 -> %ES = 0.0100 (100 shares)
+    r1 = make_report(
+        "R1",
+        executed_qty="100",
+        effective_spread="0.10",
+        percentage_effective_spread="0.0100",
+        percentage_quoted_spread="0.0200",
+        percentage_realized_spreads={
+            RealizedSpreadHorizon.MS_50: Decimal("0.0050"),
+            RealizedSpreadHorizon.S_1: None,
+        },
+    )
+    # R2: stock at $100.00, ES=$0.10 -> %ES = 0.0010 (300 shares)
+    r2 = make_report(
+        "R2",
+        executed_qty="300",
+        effective_spread="0.10",
+        percentage_effective_spread="0.0010",
+        percentage_quoted_spread="0.0040",
+        percentage_realized_spreads={
+            RealizedSpreadHorizon.MS_50: Decimal("0.0010"),
+            RealizedSpreadHorizon.S_1: Decimal("0.0020"),
+        },
+    )
+
+    # Aggregated %ES = (100 * 0.0100 + 300 * 0.0010) / 400 = (1.0 + 0.3) / 400 = 1.3 / 400 = 0.00325
+    assert share_weighted_percentage_effective_spread([r1, r2]) == Decimal("0.00325")
+
+    # Aggregated %QS = (100 * 0.0200 + 300 * 0.0040) / 400 = (2.0 + 1.2) / 400 = 3.2 / 400 = 0.008
+    assert share_weighted_percentage_quoted_spread([r1, r2]) == Decimal("0.008")
+
+    # Aggregated %RS 50ms = (100 * 0.0050 + 300 * 0.0010) / 400 = (0.5 + 0.3) / 400 = 0.8 / 400 = 0.002
+    assert share_weighted_percentage_realized_spread([r1, r2], RealizedSpreadHorizon.MS_50) == Decimal("0.002")
+
+    # Aggregated %RS 1s = (300 * 0.0020) / 300 = 0.0020 (r1 is None)
+    assert share_weighted_percentage_realized_spread([r1, r2], RealizedSpreadHorizon.S_1) == Decimal("0.0020")

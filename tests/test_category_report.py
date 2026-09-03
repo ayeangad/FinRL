@@ -18,6 +18,9 @@ def make_report(
     effective_spread: str | None = None,
     quoted_spread: str | None = None,
     realized_spreads: dict[RealizedSpreadHorizon, Decimal | None] | None = None,
+    percentage_effective_spread: str | None = None,
+    percentage_quoted_spread: str | None = None,
+    percentage_realized_spreads: dict[RealizedSpreadHorizon, Decimal | None] | None = None,
 ) -> OrderReport:
     return OrderReport(
         order_id=order_id,
@@ -36,6 +39,17 @@ def make_report(
             Decimal(quoted_spread) if quoted_spread is not None else None
         ),
         realized_spreads=realized_spreads or {},
+        percentage_effective_spread=(
+            Decimal(percentage_effective_spread)
+            if percentage_effective_spread is not None
+            else None
+        ),
+        percentage_quoted_spread=(
+            Decimal(percentage_quoted_spread)
+            if percentage_quoted_spread is not None
+            else None
+        ),
+        percentage_realized_spreads=percentage_realized_spreads or {},
     )
 
 
@@ -49,6 +63,8 @@ def test_build_category_report_single_report():
         price_improvement="0.10",
         effective_spread="0.05",
         quoted_spread="0.20",
+        percentage_effective_spread="0.0005",
+        percentage_quoted_spread="0.0020",
     )
 
     cat = build_category_report([r1], OrderTypeCategory.MARKET, OrderSizeBucket.SHARES_100_TO_499)
@@ -62,6 +78,8 @@ def test_build_category_report_single_report():
     assert cat.price_improvement == Decimal("0.10")
     assert cat.effective_spread == Decimal("0.05")
     assert cat.quoted_spread == Decimal("0.20")
+    assert cat.percentage_effective_spread == Decimal("0.0005")
+    assert cat.percentage_quoted_spread == Decimal("0.0020")
 
 
 def test_build_category_report_multiple_reports_same_bucket():
@@ -126,6 +144,13 @@ def test_realized_spread_horizons_aggregate_independently():
             RealizedSpreadHorizon.M_1: Decimal("0.04"),
             RealizedSpreadHorizon.M_5: Decimal("0.01"),
         },
+        percentage_realized_spreads={
+            RealizedSpreadHorizon.MS_50: Decimal("0.0010"),
+            RealizedSpreadHorizon.S_1: Decimal("0.0008"),
+            RealizedSpreadHorizon.S_15: None,
+            RealizedSpreadHorizon.M_1: Decimal("0.0004"),
+            RealizedSpreadHorizon.M_5: Decimal("0.0001"),
+        },
     )
 
     cat = build_category_report([r1], OrderTypeCategory.MARKET, OrderSizeBucket.SHARES_100_TO_499)
@@ -135,6 +160,52 @@ def test_realized_spread_horizons_aggregate_independently():
     assert cat.realized_spreads[RealizedSpreadHorizon.S_15] is None
     assert cat.realized_spreads[RealizedSpreadHorizon.M_1] == Decimal("0.04")
     assert cat.realized_spreads[RealizedSpreadHorizon.M_5] == Decimal("0.01")
+
+    assert cat.percentage_realized_spreads[RealizedSpreadHorizon.MS_50] == Decimal("0.0010")
+    assert cat.percentage_realized_spreads[RealizedSpreadHorizon.S_1] == Decimal("0.0008")
+    assert cat.percentage_realized_spreads[RealizedSpreadHorizon.S_15] is None
+    assert cat.percentage_realized_spreads[RealizedSpreadHorizon.M_1] == Decimal("0.0004")
+    assert cat.percentage_realized_spreads[RealizedSpreadHorizon.M_5] == Decimal("0.0001")
+
+
+def test_build_category_report_aggregates_percentage_metrics_different_midpoints():
+    # R1: stock $10.00, %ES = 0.0100 (100 shares)
+    r1 = make_report(
+        "R1",
+        executed_qty="100",
+        effective_spread="0.10",
+        percentage_effective_spread="0.0100",
+        percentage_quoted_spread="0.0200",
+        percentage_realized_spreads={
+            RealizedSpreadHorizon.MS_50: Decimal("0.0050"),
+            RealizedSpreadHorizon.S_1: None,
+        },
+    )
+    # R2: stock $100.00, %ES = 0.0010 (300 shares)
+    r2 = make_report(
+        "R2",
+        executed_qty="300",
+        effective_spread="0.10",
+        percentage_effective_spread="0.0010",
+        percentage_quoted_spread="0.0040",
+        percentage_realized_spreads={
+            RealizedSpreadHorizon.MS_50: Decimal("0.0010"),
+            RealizedSpreadHorizon.S_1: Decimal("0.0020"),
+        },
+    )
+
+    cat = build_category_report([r1, r2], OrderTypeCategory.MARKET, OrderSizeBucket.SHARES_100_TO_499)
+
+    # Aggregated %ES = (100 * 0.0100 + 300 * 0.0010) / 400 = 1.3 / 400 = 0.00325
+    assert cat.percentage_effective_spread == Decimal("0.00325")
+    # Aggregated %QS = (100 * 0.0200 + 300 * 0.0040) / 400 = 3.2 / 400 = 0.008
+    assert cat.percentage_quoted_spread == Decimal("0.008")
+    # Aggregated %RS 50ms = (100 * 0.0050 + 300 * 0.0010) / 400 = 0.8 / 400 = 0.002
+    assert cat.percentage_realized_spreads[RealizedSpreadHorizon.MS_50] == Decimal("0.002")
+    # Aggregated %RS 1s = (300 * 0.0020) / 300 = 0.0020
+    assert cat.percentage_realized_spreads[RealizedSpreadHorizon.S_1] == Decimal("0.0020")
+    # Aggregated %RS 15s = None
+    assert cat.percentage_realized_spreads[RealizedSpreadHorizon.S_15] is None
 
 
 def test_empty_category_report():
@@ -149,4 +220,7 @@ def test_empty_category_report():
     assert cat.price_improvement is None
     assert cat.effective_spread is None
     assert cat.quoted_spread is None
+    assert cat.percentage_effective_spread is None
+    assert cat.percentage_quoted_spread is None
     assert all(val is None for val in cat.realized_spreads.values())
+    assert all(val is None for val in cat.percentage_realized_spreads.values())

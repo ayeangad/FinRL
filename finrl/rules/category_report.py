@@ -8,6 +8,9 @@ from finrl.rules.order_size import OrderSizeBucket
 from finrl.rules.report import OrderReport
 from finrl.rules.report_statistics import (
     share_weighted_effective_spread,
+    share_weighted_percentage_effective_spread,
+    share_weighted_percentage_quoted_spread,
+    share_weighted_percentage_realized_spread,
     share_weighted_price_improvement,
     share_weighted_quoted_spread,
     share_weighted_realized_spread,
@@ -27,6 +30,14 @@ class CategoryReport(BaseModel):
     quoted_spread: Decimal | None = None
 
     realized_spreads: dict[
+        RealizedSpreadHorizon,
+        Decimal | None,
+    ] = Field(default_factory=dict)
+
+    percentage_effective_spread: Decimal | None = None
+    percentage_quoted_spread: Decimal | None = None
+
+    percentage_realized_spreads: dict[
         RealizedSpreadHorizon,
         Decimal | None,
     ] = Field(default_factory=dict)
@@ -66,6 +77,11 @@ def build_category_report(
         for horizon in RealizedSpreadHorizon
     }
 
+    percentage_realized_spreads = {
+        horizon: share_weighted_percentage_realized_spread(bucket_reports, horizon)
+        for horizon in RealizedSpreadHorizon
+    }
+
     return CategoryReport(
         order_type_category=category,
         order_size_bucket=bucket,
@@ -77,4 +93,7 @@ def build_category_report(
         effective_spread=share_weighted_effective_spread(bucket_reports),
         quoted_spread=share_weighted_quoted_spread(bucket_reports),
         realized_spreads=realized_spreads,
+        percentage_effective_spread=share_weighted_percentage_effective_spread(bucket_reports),
+        percentage_quoted_spread=share_weighted_percentage_quoted_spread(bucket_reports),
+        percentage_realized_spreads=percentage_realized_spreads,
     )

@@ -48,3 +48,37 @@ def share_weighted_realized_spread(
         if value is not None:
             values.append((value, report.executed_quantity))
     return share_weighted_average(values)
+
+
+def share_weighted_percentage_effective_spread(
+    reports: list[OrderReport],
+) -> Decimal | None:
+    values = [
+        (report.percentage_effective_spread, report.executed_quantity)
+        for report in reports
+        if report.percentage_effective_spread is not None
+    ]
+    return share_weighted_average(values)
+
+
+def share_weighted_percentage_quoted_spread(
+    reports: list[OrderReport],
+) -> Decimal | None:
+    values = [
+        (report.percentage_quoted_spread, report.executed_quantity)
+        for report in reports
+        if report.percentage_quoted_spread is not None
+    ]
+    return share_weighted_average(values)
+
+
+def share_weighted_percentage_realized_spread(
+    reports: list[OrderReport],
+    horizon: RealizedSpreadHorizon,
+) -> Decimal | None:
+    values = []
+    for report in reports:
+        value = report.percentage_realized_spreads.get(horizon)
+        if value is not None:
+            values.append((value, report.executed_quantity))
+    return share_weighted_average(values)
