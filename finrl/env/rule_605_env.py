@@ -1,27 +1,21 @@
-from datetime import datetime
-from decimal import Decimal
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, Field
 
-from finrl.evals.order_evaluator import evaluate_order
-from finrl.rules.classification import classify_order_category
-from finrl.rules.order_size import classify_order_size
-from finrl.rules.report_builder import build_rule_605_report
-from finrl.rules.serializer import (
-    serialize_rule_605_json,
-    serialize_rule_605_pipe_delimited,
-)
-from finrl.scenario import Scenario
-from finrl.scenario_runner import load_scenario, parse_scenario, run_scenario_and_serialize
 from finrl.env.state import (
     EnvObservation,
-    ObservableExecution,
     ObservableOrder,
-    ObservableQuote,
 )
 from finrl.env.tools import ToolAction
+from finrl.evals.order_evaluator import evaluate_order
+from finrl.scenario import Scenario
+from finrl.scenario_runner import (
+    load_scenario,
+    parse_scenario,
+    run_scenario_and_serialize,
+)
 
 
 class StepResult(BaseModel):
@@ -109,8 +103,8 @@ class Rule605Env:
         elif action.tool_name == "get_quotes":
             start_str = action.arguments.get("start_time")
             end_str = action.arguments.get("end_time")
-            start = datetime.fromisoformat(start_str) if start_str else datetime.min
-            end = datetime.fromisoformat(end_str) if end_str else datetime.max
+            start = datetime.fromisoformat(start_str) if start_str else datetime.min.replace(tzinfo=UTC)
+            end = datetime.fromisoformat(end_str) if end_str else datetime.max.replace(tzinfo=UTC)
             matching = [
                 q.model_dump(mode="json")
                 for q in self.scenario.quotes
