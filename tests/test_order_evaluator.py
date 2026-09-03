@@ -383,3 +383,136 @@ def test_evaluate_order_realized_spread_partial_missing_horizon():
     assert report.realized_spreads[RealizedSpreadHorizon.MS_50] == Decimal("-0.40")
     assert report.realized_spreads[RealizedSpreadHorizon.S_1] == Decimal("-0.40")
     assert report.realized_spreads[RealizedSpreadHorizon.S_15] == Decimal("-0.40")
+
+
+def test_evaluate_reportable_market_order():
+    received_at = datetime.fromisoformat("2026-09-01T10:30:00.100")
+    order = Order(
+        order_id="ORD-MKT-01",
+        security="FINRL",
+        side=OrderSide.BUY,
+        order_type=OrderType.MARKET,
+        quantity=Decimal("250"),
+        received_at=received_at,
+    )
+    executions = [
+        Execution(
+            execution_id="EXE-MKT-01",
+            order_id="ORD-MKT-01",
+            price=Decimal("100.00"),
+            quantity=Decimal("250"),
+            executed_at=datetime.fromisoformat("2026-09-01T10:30:00.150"),
+        )
+    ]
+    market = MarketState(
+        security="FINRL",
+        quotes=[
+            Quote(
+                security="FINRL",
+                bid_price=Decimal("99.90"),
+                bid_size=Decimal("500"),
+                ask_price=Decimal("100.10"),
+                ask_size=Decimal("300"),
+                timestamp=received_at,
+            )
+        ],
+    )
+
+    report = evaluate_order(order, executions, market)
+
+    from finrl.rules.order_size import OrderSizeBucket
+
+    assert report.reportable is True
+    assert report.order_size_bucket == OrderSizeBucket.SHARES_100_TO_499
+    assert report.executed_quantity == Decimal("250")
+    assert report.price_improvement is not None
+    assert report.effective_spread is not None
+
+
+def test_evaluate_non_marketable_limit_never_executable():
+    received_at = datetime.fromisoformat("2026-09-01T10:30:00.100")
+    # BUY limit 99.50 (below receipt bid 99.90, market never drops to 99.50)
+    order = Order(
+        order_id="ORD-NML-01",
+        security="FINRL",
+        side=OrderSide.BUY,
+        order_type=OrderType.LIMIT,
+        quantity=Decimal("300"),
+        limit_price=Decimal("99.50"),
+        received_at=received_at,
+    )
+    market = MarketState(
+        security="FINRL",
+        quotes=[
+            Quote(
+                security="FINRL",
+                bid_price=Decimal("99.90"),
+                bid_size=Decimal("500"),
+                ask_price=Decimal("100.10"),
+                ask_size=Decimal("300"),
+                timestamp=received_at,
+            )
+        ],
+    )
+
+    report = evaluate_order(order, [], market)
+
+    from finrl.rules.order_size import OrderSizeBucket
+
+    assert report.reportable is False
+    assert report.order_size_bucket == OrderSizeBucket.SHARES_100_TO_499
+    assert report.executed_quantity == Decimal("0")
+    assert report.average_execution_price is None
+    assert report.price_improvement is None
+    assert report.effective_spread is None
+    assert report.quoted_spread is None
+    assert report.realized_spreads[RealizedSpreadHorizon.MS_50] is None
+
+
+def test_evaluate_non_marketable_limit_executable_unexecuted():
+    received_at = datetime.fromisoformat("2026-09-01T10:30:00.100")
+    # BUY limit 99.60 (below receipt bid 99.70, but market drops to bid 99.60 at T+100ms)
+    order = Order(
+        order_id="ORD-NML-02",
+        security="FINRL",
+        side=OrderSide.BUY,
+        order_type=OrderType.LIMIT,
+        quantity=Decimal("1500"),
+        limit_price=Decimal("99.60"),
+        received_at=received_at,
+    )
+    market = MarketState(
+        security="FINRL",
+        quotes=[
+            Quote(
+                security="FINRL",
+                bid_price=Decimal("99.70"),
+                bid_size=Decimal("500"),
+                ask_price=Decimal("99.90"),
+                ask_size=Decimal("300"),
+                timestamp=received_at,
+            ),
+            Quote(
+                security="FINRL",
+                bid_price=Decimal("99.60"),
+                bid_size=Decimal("500"),
+                ask_price=Decimal("99.80"),
+                ask_size=Decimal("300"),
+                timestamp=datetime.fromisoformat("2026-09-01T10:30:00.200"),
+            ),
+        ],
+    )
+
+    # 0 executions (order became executable, but received 0 fills)
+    report = evaluate_order(order, [], market)
+
+    from finrl.rules.order_size import OrderSizeBucket
+
+    assert report.reportable is True
+    assert report.order_size_bucket == OrderSizeBucket.SHARES_500_TO_1999
+    assert report.executed_quantity == Decimal("0")
+    assert report.average_execution_price is None
+    assert report.price_improvement is None
+    assert report.effective_spread is None
+    assert report.quoted_spread is None
+    assert report.realized_spreads[RealizedSpreadHorizon.MS_50] is None

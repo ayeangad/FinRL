@@ -5,6 +5,7 @@ from finrl.rules.aggregation import (
     total_executed_quantity,
     volume_weighted_average_execution_price,
 )
+from finrl.rules.eligibility import is_reportable_order
 from finrl.rules.execution_context import realized_spread_at_horizon
 from finrl.rules.horizons import RealizedSpreadHorizon
 from finrl.rules.metrics import (
@@ -15,6 +16,7 @@ from finrl.rules.metrics import (
     share_weighted_price_improvement,
 )
 from finrl.rules.order_result import OrderExecutionResult
+from finrl.rules.order_size import classify_order_size
 from finrl.rules.report import OrderReport
 
 
@@ -25,17 +27,30 @@ def evaluate_order(
 ) -> OrderReport:
     executed_quantity = total_executed_quantity(executions)
     average_price = volume_weighted_average_execution_price(executions)
+    size_bucket = classify_order_size(order.quantity)
+    reportable = is_reportable_order(order, executions, market)
 
-    execution_result = OrderExecutionResult(
-        order_id=order.order_id,
-        requested_quantity=order.quantity,
-        executed_quantity=executed_quantity,
-        average_execution_price=average_price,
-    )
+    if not reportable:
+        return OrderReport(
+            order_id=order.order_id,
+            order_size_bucket=size_bucket,
+            reportable=False,
+            requested_quantity=order.quantity,
+            executed_quantity=executed_quantity,
+            average_execution_price=average_price,
+            price_improvement=None,
+            effective_spread=None,
+            quoted_spread=None,
+            realized_spreads={
+                horizon: None for horizon in RealizedSpreadHorizon
+            },
+        )
 
     if average_price is None:
         return OrderReport(
             order_id=order.order_id,
+            order_size_bucket=size_bucket,
+            reportable=True,
             requested_quantity=order.quantity,
             executed_quantity=executed_quantity,
             average_execution_price=None,
@@ -52,6 +67,8 @@ def evaluate_order(
     if quote is None:
         return OrderReport(
             order_id=order.order_id,
+            order_size_bucket=size_bucket,
+            reportable=False,
             requested_quantity=order.quantity,
             executed_quantity=executed_quantity,
             average_execution_price=average_price,
@@ -62,6 +79,13 @@ def evaluate_order(
                 horizon: None for horizon in RealizedSpreadHorizon
             },
         )
+
+    execution_result = OrderExecutionResult(
+        order_id=order.order_id,
+        requested_quantity=order.quantity,
+        executed_quantity=executed_quantity,
+        average_execution_price=average_price,
+    )
 
     realized_spreads = {
         horizon: realized_spread_at_horizon(
@@ -75,6 +99,8 @@ def evaluate_order(
 
     return OrderReport(
         order_id=order.order_id,
+        order_size_bucket=size_bucket,
+        reportable=True,
         requested_quantity=order.quantity,
         executed_quantity=execution_result.executed_quantity,
         average_execution_price=execution_result.average_execution_price,
@@ -91,4 +117,5 @@ def evaluate_order(
         quoted_spread=quoted_spread(quote),
         realized_spreads=realized_spreads,
     )
+
 

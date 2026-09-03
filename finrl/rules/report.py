@@ -3,10 +3,13 @@ from decimal import Decimal
 from pydantic import BaseModel, Field
 
 from finrl.rules.horizons import RealizedSpreadHorizon
+from finrl.rules.order_size import OrderSizeBucket
 
 
 class OrderReport(BaseModel):
     order_id: str
+    order_size_bucket: OrderSizeBucket
+    reportable: bool
 
     requested_quantity: Decimal = Field(gt=0)
     executed_quantity: Decimal = Field(ge=0)
