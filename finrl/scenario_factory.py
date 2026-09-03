@@ -11,15 +11,13 @@ def make_limit_order_scenario(
     security: str,
     side: OrderSide,
     quantity: Decimal,
-    execution_quantity: Decimal,
+    executions: list[tuple[Decimal, Decimal, datetime]],
     limit_price: Decimal,
     bid_price: Decimal,
     ask_price: Decimal,
-    execution_price: Decimal,
 ) -> dict:
     received_at = datetime.fromisoformat("2026-09-01T10:30:00.100")
-    executed_at = datetime.fromisoformat("2026-09-01T10:30:00.200")
-    
+
     scenario = {
         "scenario_id" : scenario_id,
         "version" : "v0.1",
@@ -43,19 +41,17 @@ def make_limit_order_scenario(
             }
         ]
         ,
-    "executions": (
-        [
+        "executions": [
             {
-                "execution_id": f"{scenario_id}-EXECUTION",
+                "execution_id": f"{scenario_id}-EXECUTION-{index + 1:03d}",
                 "order_id": f"{scenario_id}-ORDER",
                 "price": str(execution_price),
                 "quantity": str(execution_quantity),
-                "executed_at": executed_at.isoformat(),
+                "executed_at": execution_at.isoformat(),
             }
-        ]
-        if execution_quantity > 0
-        else []
-    ),
+        for index, (execution_price, execution_quantity, execution_at)
+        in enumerate(executions)
+    ],
     }
 
 
