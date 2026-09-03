@@ -1,10 +1,9 @@
 from datetime import datetime
 from decimal import Decimal
 
-from finrl.domain.execution import Execution
-from finrl.domain.order import OrderSide, OrderType
-from finrl.domain.quote import Quote
-from finrl.scenarios import validate_scenario
+from finrl.domain.order import Order, OrderSide, OrderType
+from finrl.evals.order_evaluator import evaluate_order
+from finrl.scenarios import load_executions, load_market, load_order, validate_scenario
 
 def make_limit_order_scenario(
     *,
@@ -55,6 +54,27 @@ def make_limit_order_scenario(
         "expected": {},
     }
 
-    validate_scenario(scenario)
+
+    order = load_order(
+        scenario["order"],
+        scenario["security"],
+    )
+    market = load_market(scenario)
+    executions = load_executions(scenario["executions"])
+
+    report = evaluate_order(
+        order=order,
+        executions=executions,
+        market=market,
+    )
+
+    scenario["expected"] = {
+        "executed_quantity": str(report.executed_quantity),
+        "average_execution_price": str(report.average_execution_price),
+        "quoted_spread": str(report.quoted_spread),
+        "price_improvement": str(report.price_improvement),
+        "effective_spread": str(report.effective_spread),
+    }
 
     return scenario
+
