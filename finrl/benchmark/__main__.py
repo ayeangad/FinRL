@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
 
-from finrl.benchmark.agent import BrokenAgent, ReferenceAgent
+from finrl.benchmark.agent import BrokenAgent, Qwen4BAgent, ReferenceAgent
 from finrl.benchmark.config import BenchmarkConfig
 from finrl.benchmark.runner import BenchmarkRunner
 
@@ -12,8 +12,8 @@ def main():
         "--model",
         type=str,
         default="reference",
-        choices=["reference", "broken"],
-        help="Agent model to evaluate (reference, broken)",
+        choices=["reference", "broken", "qwen3_4b"],
+        help="Agent model to evaluate (reference, broken, qwen3_4b)",
     )
     parser.add_argument(
         "--scenarios",
@@ -28,6 +28,8 @@ def main():
         agent = ReferenceAgent()
     elif args.model == "broken":
         agent = BrokenAgent()
+    elif args.model == "qwen3_4b":
+        agent = Qwen4BAgent()
     else:
         raise ValueError(f"Unknown model agent: {args.model}")
 
