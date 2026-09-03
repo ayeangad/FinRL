@@ -17,6 +17,15 @@ dependencies = [
 dev = [
     "pytest",
 ]
+openai = [
+    "openai",
+]
+local_llm = [
+    "torch",
+    "transformers",
+    "accelerate",
+    "bitsandbytes",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
