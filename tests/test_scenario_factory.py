@@ -2,7 +2,10 @@ from datetime import datetime
 from decimal import Decimal
 
 from finrl.domain.order import OrderSide, OrderType
-from finrl.scenario_factory import make_limit_order_scenario
+from finrl.scenario_factory import (
+    make_limit_order_scenario,
+    make_market_timeline,
+)
 
 
 def test_make_limit_order_scenario():
@@ -12,8 +15,15 @@ def test_make_limit_order_scenario():
         side=OrderSide.BUY,
         quantity=Decimal("100"),
         limit_price=Decimal("100.10"),
-        bid_price=Decimal("99.90"),
-        ask_price=Decimal("100.10"),
+        quotes=[
+            (
+                datetime.fromisoformat("2026-09-01T10:30:00.100"),
+                Decimal("99.90"),
+                Decimal("500"),
+                Decimal("100.10"),
+                Decimal("300"),
+            ),
+        ],
         executions=[
             (
                 Decimal("100.00"),
@@ -60,8 +70,15 @@ def test_make_limit_order_scenario_supports_partial_execution():
             ),
         ],
         limit_price=Decimal("100.10"),
-        bid_price=Decimal("99.90"),
-        ask_price=Decimal("100.10"),
+        quotes=[
+    (
+        datetime.fromisoformat("2026-09-01T10:30:00.100"),
+        Decimal("99.90"),
+        Decimal("500"),
+        Decimal("100.10"),
+        Decimal("300"),
+    ),
+],
     )
 
     assert scenario["order"]["quantity"] == "100"
@@ -76,8 +93,15 @@ def test_make_limit_order_scenario_supports_unexecuted_order():
         quantity=Decimal("100"),
         executions=[],
         limit_price=Decimal("100.10"),
-        bid_price=Decimal("99.90"),
-        ask_price=Decimal("100.10"),
+        quotes=[
+        (
+            datetime.fromisoformat("2026-09-01T10:30:00.100"),
+            Decimal("99.90"),
+            Decimal("500"),
+            Decimal("100.10"),
+            Decimal("300"),
+        ),
+    ],
     )
     
     assert scenario["order"]["quantity"] == "100"
@@ -107,8 +131,29 @@ def test_make_limit_order_scenario_supports_multiple_executions():
             ),
         ],
         limit_price=Decimal("100.10"),
-        bid_price=Decimal("99.90"),
-        ask_price=Decimal("100.10"),
+    quotes=[
+        (
+            datetime.fromisoformat("2026-09-01T10:30:00.100"),
+            Decimal("99.90"),
+            Decimal("500"),
+            Decimal("100.10"),
+            Decimal("300"),
+        ),
+        (
+            datetime.fromisoformat("2026-09-01T10:30:00.200"),
+            Decimal("99.95"),
+            Decimal("400"),
+            Decimal("100.05"),
+            Decimal("200"),
+        ),
+        (
+            datetime.fromisoformat("2026-09-01T10:30:00.300"),
+            Decimal("100.00"),
+            Decimal("350"),
+            Decimal("100.10"),
+            Decimal("150"),
+        ),
+    ],
     )
 
     assert len(scenario["executions"]) == 3
@@ -126,3 +171,34 @@ def test_make_limit_order_scenario_supports_multiple_executions():
     assert scenario["executions"][0]["executed_at"] == "2026-09-01T10:30:00.200000"
     assert scenario["executions"][1]["executed_at"] == "2026-09-01T10:30:00.300000"
     assert scenario["executions"][2]["executed_at"] == "2026-09-01T10:30:00.400000"
+
+def test_make_market_timeline():
+    quotes = make_market_timeline(
+        security="FINRL",
+        quotes=[
+            (
+                datetime.fromisoformat("2026-09-01T10:30:00.100"),
+                Decimal("99.90"),
+                Decimal("500"),
+                Decimal("100.10"),
+                Decimal("300"),
+            ),
+            (
+                datetime.fromisoformat("2026-09-01T10:30:00.150"),
+                Decimal("99.95"),
+                Decimal("400"),
+                Decimal("100.05"),
+                Decimal("200"),
+            ),
+        ],
+    )
+
+    assert len(quotes) == 2
+
+    assert quotes[0]["bid_price"] == "99.90"
+    assert quotes[0]["ask_price"] == "100.10"
+    assert quotes[0]["timestamp"] == "2026-09-01T10:30:00.100000"
+
+    assert quotes[1]["bid_price"] == "99.95"
+    assert quotes[1]["ask_price"] == "100.05"
+    assert quotes[1]["timestamp"] == "2026-09-01T10:30:00.150000"
