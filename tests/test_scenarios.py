@@ -168,3 +168,31 @@ def test_load_scenario_rejects_invalid_file(tmp_path):
 
     with pytest.raises(ValueError, match="references order"):
         load_scenario(invalid_path)
+
+def test_validate_scenario_rejects_missing_required_field():
+    scenario = load_scenario(SCENARIO_PATH)
+    del scenario["expected"]
+
+    with pytest.raises(
+        ValueError,
+        match="Scenario is missing required fields",
+    ):
+        validate_scenario(scenario)
+
+
+def test_validate_scenario_reports_all_missing_required_fields():
+    scenario = load_scenario(SCENARIO_PATH)
+
+    del scenario["expected"]
+    del scenario["executions"]
+
+    with pytest.raises(
+        ValueError,
+        match="Scenario is missing required fields",
+    ) as exc_info:
+        validate_scenario(scenario)
+
+    message = str(exc_info.value)
+
+    assert "expected" in message
+    assert "executions" in message
