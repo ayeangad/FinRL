@@ -76,7 +76,26 @@ def load_executions(data: list[dict]) -> list[Execution]:
         for execution in data
     ]
 
+
 def validate_scenario(scenario: dict) -> None:
+    required_fields = {
+        "scenario_id",
+        "version",
+        "security",
+        "order",
+        "quotes",
+        "executions",
+        "expected",
+    }
+
+    missing_fields = required_fields - scenario.keys()
+
+    if missing_fields:
+        raise ValueError(
+            f"Scenario is missing required fields: "
+            f"{sorted(missing_fields)}"
+        )
+
     order_id = scenario["order"]["order_id"]
     requested_quantity = Decimal(scenario["order"]["quantity"])
     security = scenario["security"]
