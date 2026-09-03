@@ -97,11 +97,13 @@ class BrokenAgent(BaseAgent):
 class Qwen4BAgent(BaseAgent):
     def __init__(
         self,
+        mode: str = "mock",
         runner: Qwen3_4B_Runner | None = None,
         prompt_path: Path | str = "prompts/rule_605_v1.txt",
         traces_dir: Path | str = "traces",
     ):
-        self.runner = runner or Qwen3_4B_Runner()
+        self.mode = mode.lower()
+        self.runner = runner or Qwen3_4B_Runner(mode=self.mode)
         self.prompt_path = Path(prompt_path)
         self.traces_dir = Path(traces_dir)
         self.system_prompt = (
@@ -112,7 +114,7 @@ class Qwen4BAgent(BaseAgent):
 
     @property
     def name(self) -> str:
-        return "qwen3_4b"
+        return f"qwen3_4b_{self.mode}"
 
     def run(self, env: Rule605Env) -> AgentTrajectory:
         obs = env._get_observation()
@@ -199,7 +201,7 @@ class Qwen4BAgent(BaseAgent):
             schema_version="v1",
             scenario_id=obs.scenario_id,
             model_name=self.name,
-            model_revision="qwen2.5-3b-instruct",
+            model_revision="qwen3-4b-instruct",
             prompt_version="rule_605_v1",
             started_at=started_at,
             completed_at=completed_at,

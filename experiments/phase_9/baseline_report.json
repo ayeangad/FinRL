@@ -1,0 +1,1328 @@
+{
+  "title": "FinRL Phase 9 Zero-Shot Baseline Report",
+  "generated_at": "2026-09-03T15:03:06.604458+00:00",
+  "model_name": "qwen3_4b_mock",
+  "model_revision": "qwen3-4b-instruct",
+  "prompt_version": "rule_605_v1",
+  "scenario_set_version": "v0.1",
+  "total_scenarios": 100,
+  "success_rate": 0.0,
+  "average_score": 0.0,
+  "critical_error_rate": 31.0,
+  "major_error_rate": 0.0,
+  "minor_error_rate": 0.0,
+  "avg_numeric_accuracy": 0.0,
+  "avg_regulatory_accuracy": 0.0,
+  "avg_workflow_integrity": 0.0,
+  "failure_taxonomy": {
+    "SUCCESS": 0,
+    "ReAct Syntax Error": 0,
+    "Tool Argument Error": 0,
+    "Premature Submission": 100,
+    "Regulatory Misclassification": 0,
+    "Metric Discrepancy": 0,
+    "Step Budget Exceeded": 0
+  },
+  "per_scenario_results": [
+    {
+      "scenario_id": "edge_case_01",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "edge_case_02",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "edge_case_03",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "edge_case_04",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "edge_case_05",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "edge_case_06",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "edge_case_07",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "edge_case_08",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "edge_case_09",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "edge_case_10",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "market_01",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "market_02",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "market_03",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "market_04",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "market_05",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "market_06",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "market_07",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "market_08",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "market_09",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "market_10",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "marketable_limit_01",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "marketable_limit_02",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "marketable_limit_03",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "marketable_limit_04",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "marketable_limit_05",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "marketable_limit_06",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "marketable_limit_07",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "marketable_limit_08",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "marketable_limit_09",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "marketable_limit_10",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "midpoint_limit_01",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "midpoint_limit_02",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "midpoint_limit_03",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "midpoint_limit_04",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "midpoint_limit_05",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "midpoint_limit_06",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "midpoint_limit_07",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "midpoint_limit_08",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "midpoint_limit_09",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "midpoint_limit_10",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "multi_exec_01",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "multi_exec_02",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "multi_exec_03",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "multi_exec_04",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "multi_exec_05",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "multi_exec_06",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "multi_exec_07",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "multi_exec_08",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "multi_exec_09",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "multi_exec_10",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "non_marketable_limit_01",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "non_marketable_limit_02",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "non_marketable_limit_03",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "non_marketable_limit_04",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "non_marketable_limit_05",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "non_marketable_limit_06",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "non_marketable_limit_07",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "non_marketable_limit_08",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "non_marketable_limit_09",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "non_marketable_limit_10",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "non_marketable_limit_11",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "non_marketable_limit_12",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "non_marketable_limit_13",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "non_marketable_limit_14",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "non_marketable_limit_15",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "realized_horizon_01",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "realized_horizon_02",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "realized_horizon_03",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "realized_horizon_04",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "realized_horizon_05",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "realized_horizon_06",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "realized_horizon_07",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "realized_horizon_08",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "realized_horizon_09",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "realized_horizon_10",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "size_boundary_01",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "size_boundary_02",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "size_boundary_03",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "size_boundary_04",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "size_boundary_05",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "stop_01",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "stop_02",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "stop_03",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "stop_04",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "stop_05",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "stop_06",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "stop_07",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "stop_08",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "stop_09",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "stop_10",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "stop_limit_01",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "stop_limit_02",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "stop_limit_03",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "stop_limit_04",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "stop_limit_05",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "stop_limit_06",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "stop_limit_07",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "stop_limit_08",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "stop_limit_09",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    },
+    {
+      "scenario_id": "stop_limit_10",
+      "success": false,
+      "primary_failure_mode": "Premature Submission",
+      "contributing_failure_modes": [
+        "Premature Submission",
+        "Regulatory Misclassification"
+      ],
+      "score": 0.0,
+      "critical_errors": 31,
+      "major_errors": 0,
+      "minor_errors": 0
+    }
+  ]
+}

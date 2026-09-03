@@ -36,7 +36,7 @@ def test_trace_schema_and_saving(tmp_path: Path):
         trace_id="test_123",
         scenario_id="market_01",
         model_name="qwen3_4b",
-        model_revision="qwen2.5-3b-instruct",
+        model_revision="qwen3-4b-instruct",
         prompt_version="rule_605_v1",
         steps=[
             StepTrace(
@@ -60,8 +60,8 @@ def test_trace_schema_and_saving(tmp_path: Path):
 
 
 def test_qwen_agent_single_scenario_end_to_end(tmp_path: Path):
-    runner = Qwen3_4B_Runner(use_mock=True)
-    agent = Qwen4BAgent(runner=runner, traces_dir=tmp_path)
+    runner = Qwen3_4B_Runner(mode="mock")
+    agent = Qwen4BAgent(mode="mock", runner=runner, traces_dir=tmp_path)
 
     env = Rule605Env()
     env.reset(GOLDEN_SCENARIO)
@@ -69,11 +69,11 @@ def test_qwen_agent_single_scenario_end_to_end(tmp_path: Path):
     trajectory = agent.run(env)
 
     assert env.done
-    assert trajectory.agent_name == "qwen3_4b"
+    assert trajectory.agent_name == "qwen3_4b_mock"
     assert trajectory.scenario_id == "market_01"
     assert trajectory.steps_count >= 1
     assert trajectory.submitted_pipe is not None
 
     # Check trace saved
-    expected_trace_file = tmp_path / "rule_605_v1" / "qwen3_4b" / "market_01.json"
+    expected_trace_file = tmp_path / "rule_605_v1" / "qwen3_4b_mock" / "market_01.json"
     assert expected_trace_file.exists()

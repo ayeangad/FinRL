@@ -6,20 +6,34 @@ from typing import Any
 class Qwen3_4B_Runner:
     def __init__(
         self,
-        model_name_or_path: str = "Qwen/Qwen2.5-3B-Instruct",
+        model_name_or_path: str = "Qwen/Qwen3-4B-Instruct",
         device: str | None = None,
-        use_mock: bool = False,
+        mode: str = "mock",
     ):
         self.model_name_or_path = model_name_or_path
-        self.use_mock = use_mock or os.getenv("FINRL_MOCK_LLM", "0") == "1"
+        self.mode = mode.lower()
+        self.device = device
         self.tokenizer: Any = None
         self.model: Any = None
-        self.device = device
+        self.precision_str = "float32"
 
-        if not self.use_mock:
+        if self.mode not in ("real", "mock"):
+            raise ValueError(f"Invalid mode '{mode}'. Must be 'real' or 'mock'.")
+
+        if self.mode == "real":
             try:
                 import torch
                 from transformers import AutoModelForCausalLM, AutoTokenizer
+
+                device_str = self.device or ("cuda" if torch.cuda.is_available() else "cpu")
+                self.device = device_str
+
+                if torch.cuda.is_available():
+                    dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
+                    self.precision_str = "bfloat16" if dtype == torch.bfloat16 else "float16"
+                else:
+                    dtype = torch.float32
+                    self.precision_str = "float32"
 
                 self.tokenizer = AutoTokenizer.from_pretrained(
                     self.model_name_or_path,
@@ -27,15 +41,17 @@ class Qwen3_4B_Runner:
                 )
                 self.model = AutoModelForCausalLM.from_pretrained(
                     self.model_name_or_path,
-                    torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
+                    torch_dtype=dtype,
                     device_map="auto" if torch.cuda.is_available() else None,
                     trust_remote_code=True,
                 )
-                if not torch.cuda.is_available() and self.device:
-                    self.model = self.model.to(self.device)
+                if not torch.cuda.is_available() and self.device == "cpu":
+                    self.model = self.model.to("cpu")
             except Exception as exc:
-                print(f"[Qwen3_4B_Runner] Notice: HuggingFace model load skipped ({exc}). Using mock mode.")
-                self.use_mock = True
+                raise RuntimeError(
+                    f"CRITICAL: Failed to load real model '{self.model_name_or_path}': {exc}.\n"
+                    f"In '--mode real', implicit fallback to mock mode is strictly forbidden to prevent invalid experimental reporting."
+                ) from exc
 
     def generate(
         self,
@@ -45,7 +61,7 @@ class Qwen3_4B_Runner:
     ) -> tuple[str, int, int, float]:
         t0 = time.perf_counter()
 
-        if self.use_mock:
+        if self.mode == "mock":
             input_tokens = len(prompt.split())
             output_text = self._mock_generate(prompt)
             output_tokens = len(output_text.split())
@@ -56,7 +72,7 @@ class Qwen3_4B_Runner:
 
         inputs = self.tokenizer(prompt, return_tensors="pt")
         input_len = inputs["input_ids"].shape[1]
-        if self.model.device:
+        if hasattr(self.model, "device"):
             inputs = {k: v.to(self.model.device) for k, v in inputs.items()}
 
         with torch.no_grad():
