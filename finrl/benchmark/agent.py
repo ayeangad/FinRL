@@ -9,7 +9,7 @@ from finrl.benchmark.trace import AgentTrace, StepTrace, save_trace
 from finrl.env.rule_605_env import Rule605Env
 from finrl.env.tools import ToolAction
 from finrl.models.openai import OpenAIRunner
-from finrl.models.qwen3_1_7b import Qwen3_1_7B_Runner
+from finrl.models.qwen3_0_6b import Qwen3_0_6B_Runner
 
 
 class AgentTrajectory(BaseModel):
@@ -95,20 +95,20 @@ class BrokenAgent(BaseAgent):
         )
 
 
-class Qwen1_7BAgent(BaseAgent):
+class QwenAgent(BaseAgent):
     def __init__(
         self,
         mode: str = "mock",
-        checkpoint: str = "Qwen/Qwen3-1.7B",
+        checkpoint: str = "Qwen/Qwen3-0.6B",
         device: str | None = None,
-        runner: Qwen3_1_7B_Runner | None = None,
+        runner: Qwen3_0_6B_Runner | None = None,
         prompt_path: Path | str = "prompts/rule_605_v1.txt",
         traces_dir: Path | str = "traces",
     ):
         self.mode = mode.lower()
         self.checkpoint = checkpoint
         self.device = device
-        self.runner = runner or Qwen3_1_7B_Runner(checkpoint=self.checkpoint, device=self.device, mode=self.mode)
+        self.runner = runner or Qwen3_0_6B_Runner(checkpoint=self.checkpoint, device=self.device, mode=self.mode)
         self.prompt_path = Path(prompt_path)
         self.traces_dir = Path(traces_dir)
         self.system_prompt = (
@@ -119,7 +119,7 @@ class Qwen1_7BAgent(BaseAgent):
 
     @property
     def name(self) -> str:
-        return f"qwen3_1_7b_{self.mode}"
+        return f"qwen_{self.mode}"
 
     def run(self, env: Rule605Env) -> AgentTrajectory:
         obs = env._get_observation()
@@ -153,7 +153,7 @@ class Qwen1_7BAgent(BaseAgent):
             # Inference call
             raw_output, in_tok, out_tok, lat_ms = self.runner.generate(
                 prompt,
-                max_new_tokens=2048,
+                max_new_tokens=256,
                 temperature=0.0,
             )
 

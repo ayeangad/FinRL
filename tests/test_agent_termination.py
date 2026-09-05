@@ -1,5 +1,5 @@
 from unittest.mock import MagicMock
-from finrl.benchmark.agent import Qwen1_7BAgent
+from finrl.benchmark.agent import QwenAgent
 from finrl.env.rule_605_env import Rule605Env
 
 
@@ -35,7 +35,7 @@ def test_agent_terminates_on_submit_report():
         10, 10, 100.0
     )
     
-    agent = Qwen1_7BAgent(runner=runner_mock)
+    agent = QwenAgent(runner=runner_mock)
     agent.traces_dir = MagicMock()  # Mock save_trace dir to avoid writing to disk
     agent.run(env)
     

@@ -1,4 +1,4 @@
-from finrl.benchmark.agent import BaseAgent, BrokenAgent, Qwen1_7BAgent, ReferenceAgent
+from finrl.benchmark.agent import BaseAgent, BrokenAgent, QwenAgent, ReferenceAgent
 from finrl.benchmark.config import BenchmarkConfig
 from finrl.benchmark.evaluator import evaluate_submission
 from finrl.benchmark.react_parser import ParseResult, parse_react_output
@@ -14,7 +14,7 @@ __all__ = [
     "BenchmarkRunner",
     "BrokenAgent",
     "ParseResult",
-    "Qwen1_7BAgent",
+    "QwenAgent",
     "ReferenceAgent",
     "ScenarioResult",
     "StepTrace",

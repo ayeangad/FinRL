@@ -1,9 +1,9 @@
 import json
 from pathlib import Path
 
-from finrl.benchmark import AgentTrace, Qwen1_7BAgent, StepTrace, parse_react_output, save_trace
+from finrl.benchmark import AgentTrace, QwenAgent, StepTrace, parse_react_output, save_trace
 from finrl.env import Rule605Env
-from finrl.models.qwen3_1_7b import Qwen3_1_7B_Runner
+from finrl.models.qwen3_0_6b import Qwen3_0_6B_Runner
 
 GOLDEN_SCENARIO = Path(__file__).parent.parent / "scenarios" / "v0.1" / "golden" / "market_01.json"
 
@@ -35,8 +35,8 @@ def test_trace_schema_and_saving(tmp_path: Path):
     trace = AgentTrace(
         trace_id="test_123",
         scenario_id="market_01",
-        model_name="qwen3_1_7b",
-        model_revision="Qwen/Qwen3-1.7B",
+        model_name="qwen",
+        model_revision="Qwen/Qwen3-0.6B",
         prompt_version="rule_605_v1",
         steps=[
             StepTrace(
@@ -60,8 +60,8 @@ def test_trace_schema_and_saving(tmp_path: Path):
 
 
 def test_qwen_agent_single_scenario_end_to_end(tmp_path: Path):
-    runner = Qwen3_1_7B_Runner(mode="mock")
-    agent = Qwen1_7BAgent(mode="mock", runner=runner, traces_dir=tmp_path)
+    runner = Qwen3_0_6B_Runner(mode="mock")
+    agent = QwenAgent(mode="mock", runner=runner, traces_dir=tmp_path)
 
     env = Rule605Env()
     env.reset(GOLDEN_SCENARIO)
@@ -69,11 +69,11 @@ def test_qwen_agent_single_scenario_end_to_end(tmp_path: Path):
     trajectory = agent.run(env)
 
     assert env.done
-    assert trajectory.agent_name == "qwen3_1_7b_mock"
+    assert trajectory.agent_name == "qwen_mock"
     assert trajectory.scenario_id == "market_01"
     assert trajectory.steps_count >= 1
     assert trajectory.submitted_pipe is not None
 
     # Check trace saved
-    expected_trace_file = tmp_path / "rule_605_v1" / "qwen3_1_7b_mock" / "market_01.json"
+    expected_trace_file = tmp_path / "rule_605_v1" / "qwen_mock" / "market_01.json"
     assert expected_trace_file.exists()

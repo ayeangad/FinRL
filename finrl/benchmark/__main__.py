@@ -4,7 +4,7 @@ from pathlib import Path
 from finrl.benchmark.agent import (
     BrokenAgent,
     OpenAIAgent,
-    Qwen1_7BAgent,
+    QwenAgent,
     ReferenceAgent,
 )
 from finrl.benchmark.config import BenchmarkConfig
@@ -17,8 +17,8 @@ def main():
         "--model",
         type=str,
         default="reference",
-        choices=["reference", "broken", "qwen3_1_7b", "openai"],
-        help="Agent model to evaluate (reference, broken, qwen3_1_7b, openai)",
+        choices=["reference", "broken", "qwen", "openai"],
+        help="Agent model to evaluate (reference, broken, qwen, openai)",
     )
     parser.add_argument(
         "--mode",
@@ -30,7 +30,7 @@ def main():
     parser.add_argument(
         "--checkpoint",
         type=str,
-        default="Qwen/Qwen3-1.7B",
+        default="Qwen/Qwen3-0.6B",
         help="HuggingFace model ID or local path to model checkpoint",
     )
     parser.add_argument(
@@ -65,8 +65,8 @@ def main():
     elif args.model == "broken":
         agent = BrokenAgent()
         weights_str = "NONE (broken logic)"
-    elif args.model == "qwen3_1_7b":
-        agent = Qwen1_7BAgent(mode=args.mode, checkpoint=args.checkpoint, device=args.device)
+    elif args.model == "qwen":
+        agent = QwenAgent(mode=args.mode, checkpoint=args.checkpoint, device=args.device)
         device_str = agent.runner.device or "cpu"
         precision_str = agent.runner.precision_str
         weights_str = agent.runner.checkpoint if args.mode == "real" else "NONE (mock)"
