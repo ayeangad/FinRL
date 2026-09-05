@@ -291,6 +291,7 @@ class QwenAgent(BaseAgent):
                 raw_model_output=raw_output,
                 thought=parse_res.thought,
                 action=parse_res.action_dict,
+                prompt_tokens=in_tok,
                 latency_ms=lat_ms,
             )
 
@@ -322,6 +323,8 @@ class QwenAgent(BaseAgent):
 
         completed_at = datetime.now(UTC)
 
+        termination = "submitted" if submitted_pipe is not None else "max_steps"
+
         # Build and save immutable trace
         agent_trace = AgentTrace(
             trace_id=f"{self.name}_{obs.scenario_id}_{int(started_at.timestamp())}",
@@ -341,6 +344,7 @@ class QwenAgent(BaseAgent):
                 "output_tokens": total_output_tokens,
                 "total_tokens": total_input_tokens + total_output_tokens,
                 "cost_usd": 0.0,
+                "termination": termination,
                 "context": _build_context_metrics(self.prompt_strategy, system_prompt, window, selected_sections),
             },
         )
@@ -448,6 +452,7 @@ class OpenAIAgent(BaseAgent):
                 raw_model_output=raw_output,
                 thought=parse_res.thought,
                 action=parse_res.action_dict,
+                prompt_tokens=in_tok,
                 latency_ms=lat_ms,
             )
 
@@ -479,6 +484,8 @@ class OpenAIAgent(BaseAgent):
 
         completed_at = datetime.now(UTC)
 
+        termination = "submitted" if submitted_pipe is not None else "max_steps"
+
         # Build and save immutable trace
         agent_trace = AgentTrace(
             trace_id=f"{self.name}_{obs.scenario_id}_{int(started_at.timestamp())}",
@@ -498,6 +505,7 @@ class OpenAIAgent(BaseAgent):
                 "output_tokens": total_output_tokens,
                 "total_tokens": total_input_tokens + total_output_tokens,
                 "cost_usd": 0.0,
+                "termination": termination,
                 "context": _build_context_metrics(self.prompt_strategy, system_prompt, window, selected_sections),
             },
         )
