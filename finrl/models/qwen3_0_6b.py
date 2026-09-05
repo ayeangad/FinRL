@@ -51,7 +51,7 @@ class Qwen3_0_6B_Runner:
                         self.checkpoint,
                         quantization_config=quantization_config,
                         device_map={"": 0},
-                        attn_implementation="xformers",
+                        attn_implementation="sdpa",
                         trust_remote_code=True,
                     )
                     self.model.eval()
@@ -102,14 +102,15 @@ class Qwen3_0_6B_Runner:
             inputs = {k: v.to(self.model.device) for k, v in inputs.items()}
 
         with torch.no_grad():
-            outputs = self.model.generate(
-                **inputs,
-                max_new_tokens=min(max_new_tokens, 512),
-                do_sample=temperature > 0,
-                temperature=temperature if temperature > 0 else 1.0,
-                pad_token_id=self.tokenizer.eos_token_id,
-                use_cache=True,
-            )
+            with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_math=False, enable_mem_efficient=True):
+                outputs = self.model.generate(
+                    **inputs,
+                    max_new_tokens=min(max_new_tokens, 512),
+                    do_sample=temperature > 0,
+                    temperature=temperature if temperature > 0 else 1.0,
+                    pad_token_id=self.tokenizer.eos_token_id,
+                    use_cache=True,
+                )
 
         generated_ids = outputs[0][input_len:]
         output_text = self.tokenizer.decode(generated_ids, skip_special_tokens=True)
