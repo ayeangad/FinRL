@@ -1,0 +1,6 @@
+scenario                 type    termination steps input_tok peak_prompt  trunc  dropped elapsed_s  score
+market_01.json           market  submitted      4      6615      1888      0        0     54.9  0.000
+marketable_limit_01.json limit   timeout       -1         0         0      0        0      600  0.000
+midpoint_limit_01.json   limit   timeout       -1         0         0      0        0      600  0.000
+multi_exec_01.json       multi   timeout       -1         0         0      0        0      600  0.000
+stop_01.json             stop    timeout       -1         0         0      0        0      600  0.000
