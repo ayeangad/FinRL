@@ -1,3 +1,4 @@
+import gc
 import time
 from typing import Any
 
@@ -50,6 +51,7 @@ class Qwen3_0_6B_Runner:
                         self.checkpoint,
                         quantization_config=quantization_config,
                         device_map={"": 0},
+                        attn_implementation="sdpa",
                         trust_remote_code=True,
                     )
                     self.model.eval()
@@ -113,6 +115,11 @@ class Qwen3_0_6B_Runner:
         output_text = self.tokenizer.decode(generated_ids, skip_special_tokens=True)
         output_tokens = len(generated_ids)
         latency_ms = round((time.perf_counter() - t0) * 1000.0, 2)
+
+        del inputs, outputs
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
 
         return output_text, input_len, output_tokens, latency_ms
 
