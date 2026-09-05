@@ -52,6 +52,13 @@ def main():
         default=None,
         help="Limit number of scenarios to execute for fast smoke testing (e.g. --limit 1)",
     )
+    parser.add_argument(
+        "--prompt-strategy",
+        type=str,
+        default="scenario_aware",
+        choices=["scenario_aware", "full"],
+        help="Scenario-aware section selection (default) or the full monolithic prompt",
+    )
 
     args = parser.parse_args()
 
@@ -66,12 +73,22 @@ def main():
         agent = BrokenAgent()
         weights_str = "NONE (broken logic)"
     elif args.model == "qwen":
-        agent = QwenAgent(mode=args.mode, checkpoint=args.checkpoint, device=args.device)
+        agent = QwenAgent(
+            mode=args.mode,
+            checkpoint=args.checkpoint,
+            device=args.device,
+            use_scenario_context=(args.prompt_strategy == "scenario_aware"),
+        )
         device_str = agent.runner.device or "cpu"
         precision_str = agent.runner.precision_str
         weights_str = agent.runner.checkpoint if args.mode == "real" else "NONE (mock)"
     elif args.model == "openai":
-        agent = OpenAIAgent(mode=args.mode, checkpoint=args.checkpoint, device=args.device)
+        agent = OpenAIAgent(
+            mode=args.mode,
+            checkpoint=args.checkpoint,
+            device=args.device,
+            use_scenario_context=(args.prompt_strategy == "scenario_aware"),
+        )
         device_str = "api"
         precision_str = "api"
         weights_str = agent.runner.checkpoint if args.mode == "real" else "NONE (mock)"
@@ -90,7 +107,7 @@ def main():
     print(f"Precision:   {precision_str}")
     print(f"Weights:     {weights_str}")
     print(f"Scenarios:   {args.limit if args.limit else '100'}")
-    print("Prompt:      rule_605_v1")
+    print(f"Prompt:      {args.prompt_strategy}")
     print("=" * 60 + "\n")
 
     result = runner.run_benchmark(agent, limit=args.limit)

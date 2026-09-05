@@ -1,0 +1,4 @@
+STOP ORDER CLASSIFICATION:
+- Stop and stop-limit orders are categorized into the 'stop' Order Type Category regardless of their limit price.
+- A stop order becomes executable once the market crosses its stop_price; the reported category remains 'stop'.
+- Use `classify_order` to confirm the exact category and `calculate_metrics` for spread and price-improvement figures. Do not hand-derive them.

@@ -1,0 +1,5 @@
+MULTI-ORDER AGGREGATION:
+- When the scenario contains multiple orders, aggregate ALL of them into a single 30-row report.
+- Group each order by its Order Type Category and Order Size Bucket.
+- For each (category, bucket) cell: sum shares and count orders across ALL orders in that cell; do not emit a row per order.
+- Orders in different size buckets or different categories MUST NOT be combined; only identical (category, bucket) cells aggregate together.

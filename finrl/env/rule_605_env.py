@@ -26,8 +26,9 @@ class StepResult(BaseModel):
 
 
 class Rule605Env:
-    def __init__(self, max_steps: int = 50):
+    def __init__(self, max_steps: int = 50, max_action_history: int = 20):
         self.max_steps = max_steps
+        self.max_action_history = max_action_history
         self.scenario: Scenario | None = None
         self.current_step: int = 0
         self.done: bool = False
@@ -82,6 +83,8 @@ class Rule605Env:
 
         self.current_step += 1
         self.action_history.append(f"{action.tool_name}({action.arguments})")
+        if self.max_action_history and len(self.action_history) > self.max_action_history:
+            self.action_history = self.action_history[-self.max_action_history :]
 
         tool_output: Any = None
         reward: float = 0.0

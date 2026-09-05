@@ -1,0 +1,6 @@
+LIMIT ORDER CLASSIFICATION:
+- A limit order's category depends on its limit price relative to the receipt-market NBBO midpoint:
+  * Buy at/above ask, or sell at/below bid -> marketable_limit
+  * Buy at/above midpoint but below ask, or sell at/below midpoint but above bid -> midpoint_or_better_limit
+  * Otherwise -> non_marketable_limit
+- Use `classify_order` to confirm the exact category and `calculate_metrics` for spread figures.

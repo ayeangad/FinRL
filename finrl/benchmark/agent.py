@@ -4,12 +4,106 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field
 
+from finrl.benchmark.context_selector import ContextSelector
 from finrl.benchmark.react_parser import parse_react_output
 from finrl.benchmark.trace import AgentTrace, StepTrace, save_trace
 from finrl.env.rule_605_env import Rule605Env
 from finrl.env.tools import ToolAction
 from finrl.models.openai import OpenAIRunner
 from finrl.models.qwen3_0_6b import Qwen3_0_6B_Runner
+
+
+class ConversationWindow:
+    """Bounded, recency-aware conversation history for prompt construction.
+
+    Entries are physically pruned once they exceed the token budget, with the
+    ``keep_last_n`` most-recent (model, tool) exchange-pairs always retained.
+    Token counts are an approximation (~1 token per 4 characters).
+    """
+
+    def __init__(self, max_tokens: int = 3000, keep_last_n: int = 3):
+        if max_tokens < 1:
+            raise ValueError("max_tokens must be >= 1")
+        self.max_tokens = max_tokens
+        self.keep_last_n = max(1, keep_last_n)
+        self._entries: list[str] = []
+        self._entry_tokens: list[int] = []
+        self.full_tokens_total = 0
+        self.dropped_entries_total = 0
+        self.truncation_count = 0
+
+    def append(self, entry: str) -> None:
+        estimated = self._estimate_tokens(entry)
+        self._entries.append(entry)
+        self._entry_tokens.append(estimated)
+        self.full_tokens_total += estimated
+        self._prune()
+
+    def get_history_str(self) -> str:
+        if not self._entries:
+            return ""
+        body = "\n".join(self._entries)
+        if self.dropped_entries_total > 0:
+            header = f"[{self.dropped_exchanges} earlier exchanges truncated to fit {self.max_tokens}-token context budget]"
+            return f"{header}\n{body}"
+        return body
+
+    @property
+    def history_tokens_now(self) -> int:
+        return sum(self._entry_tokens)
+
+    @property
+    def entries_now(self) -> int:
+        return len(self._entries)
+
+    @property
+    def dropped_exchanges(self) -> int:
+        return self.dropped_entries_total // 2
+
+    def _prune(self) -> None:
+        protected_count = min(len(self._entries), self.keep_last_n * 2)
+        protected_tokens = sum(self._entry_tokens[-protected_count:])
+        droppable_end = len(self._entries) - protected_count
+        budget = self.max_tokens - protected_tokens
+
+        kept = 0
+        used = 0
+        for i in range(droppable_end):
+            if used + self._entry_tokens[i] > budget:
+                break
+            used += self._entry_tokens[i]
+            kept += 1
+
+        drop_count = droppable_end - kept
+        if drop_count <= 0:
+            return
+
+        self._entries = self._entries[drop_count:]
+        self._entry_tokens = self._entry_tokens[drop_count:]
+        self.dropped_entries_total += drop_count
+        self.truncation_count += 1
+
+    @staticmethod
+    def _estimate_tokens(text: str) -> int:
+        return max(1, len(text) // 4)
+
+
+def _build_context_metrics(
+    prompt_strategy: str,
+    system_prompt: str,
+    window: ConversationWindow,
+    selected_sections: list[str],
+) -> dict:
+    return {
+        "prompt_strategy": prompt_strategy,
+        "selected_sections": selected_sections,
+        "system_prompt_est_tokens": ConversationWindow._estimate_tokens(system_prompt),
+        "history_max_tokens": window.max_tokens,
+        "history_full_est_tokens": window.full_tokens_total,
+        "history_bounded_est_tokens": window.history_tokens_now,
+        "dropped_exchanges": window.dropped_exchanges,
+        "truncation_events": window.truncation_count,
+    }
 
 
 class AgentTrajectory(BaseModel):
@@ -95,6 +189,17 @@ class BrokenAgent(BaseAgent):
         )
 
 
+def _resolve_context_selector(context_selector: ContextSelector | None, use_scenario_context: bool) -> ContextSelector | None:
+    if context_selector is not None:
+        return context_selector
+    if not use_scenario_context:
+        return None
+    try:
+        return ContextSelector()
+    except FileNotFoundError:
+        return None
+
+
 class QwenAgent(BaseAgent):
     def __init__(
         self,
@@ -104,6 +209,10 @@ class QwenAgent(BaseAgent):
         runner: Qwen3_0_6B_Runner | None = None,
         prompt_path: Path | str = "prompts/rule_605_v1.txt",
         traces_dir: Path | str = "traces",
+        context_selector: ContextSelector | None = None,
+        use_scenario_context: bool = True,
+        max_history_tokens: int = 3000,
+        keep_last_n_exchanges: int = 3,
     ):
         self.mode = mode.lower()
         self.checkpoint = checkpoint
@@ -111,11 +220,15 @@ class QwenAgent(BaseAgent):
         self.runner = runner or Qwen3_0_6B_Runner(checkpoint=self.checkpoint, device=self.device, mode=self.mode)
         self.prompt_path = Path(prompt_path)
         self.traces_dir = Path(traces_dir)
-        self.system_prompt = (
+        self.fallback_prompt = (
             self.prompt_path.read_text()
             if self.prompt_path.exists()
             else "You are an SEC Rule 605 analyst. Return ReAct JSON actions."
         )
+        self.context_selector = _resolve_context_selector(context_selector, use_scenario_context)
+        self.max_history_tokens = max_history_tokens
+        self.keep_last_n_exchanges = keep_last_n_exchanges
+        self.prompt_strategy = "scenario_aware" if self.context_selector is not None else "full"
 
     @property
     def name(self) -> str:
@@ -126,7 +239,7 @@ class QwenAgent(BaseAgent):
         started_at = datetime.now(UTC)
 
         step_traces: list[StepTrace] = []
-        conversation_history: list[str] = []
+        window = ConversationWindow(max_tokens=self.max_history_tokens, keep_last_n=self.keep_last_n_exchanges)
         submitted_pipe: str | None = None
 
         total_input_tokens = 0
@@ -136,13 +249,21 @@ class QwenAgent(BaseAgent):
         tool_calls_count = 0
         actions_taken = []
 
+        assembled = (
+            self.context_selector.build_from_observation(obs.scenario_id, obs.orders)
+            if self.context_selector is not None
+            else None
+        )
+        system_prompt = assembled.text if assembled is not None else self.fallback_prompt
+        selected_sections = assembled.selected_sections if assembled is not None else []
+
         while not env.done and env.current_step < env.max_steps:
             current_step_num = env.current_step + 1
 
             # Format current prompt
-            history_str = "\n".join(conversation_history)
+            history_str = window.get_history_str()
             prompt = (
-                f"{self.system_prompt}\n\n"
+                f"{system_prompt}\n\n"
                 f"SCENARIO OBJECTIVE:\n"
                 f"Scenario ID: {obs.scenario_id}, Security: {obs.security}\n"
                 f"Orders: {[o.model_dump(mode='json') for o in obs.orders]}\n\n"
@@ -175,8 +296,8 @@ class QwenAgent(BaseAgent):
 
             if parse_res.error or not parse_res.tool_action:
                 invalid_actions_count += 1
-                conversation_history.append(f"Model Output:\n{raw_output}")
-                conversation_history.append(f"System Error: {parse_res.error}. Please retry with valid ReAct JSON Action.")
+                window.append(f"Model Output:\n{raw_output}")
+                window.append(f"System Error: {parse_res.error}. Please retry with valid ReAct JSON Action.")
                 step_traces.append(step_trace)
                 continue
 
@@ -196,8 +317,8 @@ class QwenAgent(BaseAgent):
                 submitted_pipe = tool_action.arguments.get("report")
                 break
 
-            conversation_history.append(f"Model Output:\n{raw_output}")
-            conversation_history.append(f"Environment Tool Output:\n{tool_output}")
+            window.append(f"Model Output:\n{raw_output}")
+            window.append(f"Environment Tool Output:\n{tool_output}")
 
         completed_at = datetime.now(UTC)
 
@@ -220,6 +341,7 @@ class QwenAgent(BaseAgent):
                 "output_tokens": total_output_tokens,
                 "total_tokens": total_input_tokens + total_output_tokens,
                 "cost_usd": 0.0,
+                "context": _build_context_metrics(self.prompt_strategy, system_prompt, window, selected_sections),
             },
         )
         save_trace(agent_trace, base_dir=self.traces_dir)
@@ -245,17 +367,25 @@ class OpenAIAgent(BaseAgent):
         runner: OpenAIRunner | None = None,
         prompt_path: Path | str = "prompts/rule_605_v1.txt",
         traces_dir: Path | str = "traces",
+        context_selector: ContextSelector | None = None,
+        use_scenario_context: bool = True,
+        max_history_tokens: int = 6000,
+        keep_last_n_exchanges: int = 3,
     ):
         self.mode = mode.lower()
         self.checkpoint = checkpoint
         self.runner = runner or OpenAIRunner(checkpoint=self.checkpoint, mode=self.mode)
         self.prompt_path = Path(prompt_path)
         self.traces_dir = Path(traces_dir)
-        self.system_prompt = (
+        self.fallback_prompt = (
             self.prompt_path.read_text()
             if self.prompt_path.exists()
             else "You are an SEC Rule 605 analyst. Return ReAct JSON actions."
         )
+        self.context_selector = _resolve_context_selector(context_selector, use_scenario_context)
+        self.max_history_tokens = max_history_tokens
+        self.keep_last_n_exchanges = keep_last_n_exchanges
+        self.prompt_strategy = "scenario_aware" if self.context_selector is not None else "full"
 
     @property
     def name(self) -> str:
@@ -266,7 +396,7 @@ class OpenAIAgent(BaseAgent):
         started_at = datetime.now(UTC)
 
         step_traces: list[StepTrace] = []
-        conversation_history: list[str] = []
+        window = ConversationWindow(max_tokens=self.max_history_tokens, keep_last_n=self.keep_last_n_exchanges)
         submitted_pipe: str | None = None
 
         total_input_tokens = 0
@@ -276,13 +406,21 @@ class OpenAIAgent(BaseAgent):
         tool_calls_count = 0
         actions_taken = []
 
+        assembled = (
+            self.context_selector.build_from_observation(obs.scenario_id, obs.orders)
+            if self.context_selector is not None
+            else None
+        )
+        system_prompt = assembled.text if assembled is not None else self.fallback_prompt
+        selected_sections = assembled.selected_sections if assembled is not None else []
+
         while not env.done and env.current_step < env.max_steps:
             current_step_num = env.current_step + 1
 
             # Format current prompt
-            history_str = "\n".join(conversation_history)
+            history_str = window.get_history_str()
             prompt = (
-                f"{self.system_prompt}\n\n"
+                f"{system_prompt}\n\n"
                 f"SCENARIO OBJECTIVE:\n"
                 f"Scenario ID: {obs.scenario_id}, Security: {obs.security}\n"
                 f"Orders: {[o.model_dump(mode='json') for o in obs.orders]}\n\n"
@@ -315,8 +453,8 @@ class OpenAIAgent(BaseAgent):
 
             if parse_res.error or not parse_res.tool_action:
                 invalid_actions_count += 1
-                conversation_history.append(f"Model Output:\n{raw_output}")
-                conversation_history.append(f"System Error: {parse_res.error}. Please retry with valid ReAct JSON Action.")
+                window.append(f"Model Output:\n{raw_output}")
+                window.append(f"System Error: {parse_res.error}. Please retry with valid ReAct JSON Action.")
                 step_traces.append(step_trace)
                 continue
 
@@ -336,8 +474,8 @@ class OpenAIAgent(BaseAgent):
                 submitted_pipe = tool_action.arguments.get("report")
                 break
 
-            conversation_history.append(f"Model Output:\n{raw_output}")
-            conversation_history.append(f"Environment Tool Output:\n{tool_output}")
+            window.append(f"Model Output:\n{raw_output}")
+            window.append(f"Environment Tool Output:\n{tool_output}")
 
         completed_at = datetime.now(UTC)
 
@@ -360,6 +498,7 @@ class OpenAIAgent(BaseAgent):
                 "output_tokens": total_output_tokens,
                 "total_tokens": total_input_tokens + total_output_tokens,
                 "cost_usd": 0.0,
+                "context": _build_context_metrics(self.prompt_strategy, system_prompt, window, selected_sections),
             },
         )
         save_trace(agent_trace, base_dir=self.traces_dir)

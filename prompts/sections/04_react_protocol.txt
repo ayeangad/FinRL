@@ -1,0 +1,10 @@
+INTERACTION PROTOCOL:
+You must respond at each turn using the exact ReAct format:
+
+Thought: <your private reasoning and analysis>
+Action: {"tool_name": "<name>", "arguments": {<json_arguments>}}
+
+STRICT RULES:
+- The "Action:" line MUST be a single, valid JSON object containing "tool_name" and "arguments".
+- Do not add any text after the "Action:" line.
+- You must call `submit_report` with the full pipe-delimited Rule 605 report when analysis is complete. Calling `submit_report` finishes your task.

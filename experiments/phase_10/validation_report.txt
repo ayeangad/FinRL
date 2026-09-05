@@ -1,0 +1,32 @@
+Context orchestration validation (phase_10)
+----------------------------------------------------------------------
+Offline replay of pre-existing real traces through ConversationWindow,
+with scenario-aware system prompt selection. Token estimates: len//4.
+
+  openai_real    edge_case_10           steps=9   2937 ->  2937 est (real API cumulative 14198) dropped=0
+  openai_real    edge_case_01           steps=7   2621 ->  2621 est (real API cumulative  9676) dropped=0
+  openai_real    edge_case_02           steps=7   2613 ->  2613 est (real API cumulative  9793) dropped=0
+  qwen_real      edge_case_01           steps=7   1749 ->  1749 est (real API cumulative 10026) dropped=0
+  openai_real    market_04              steps=6   2325 ->  2325 est (real API cumulative  7682) dropped=0
+  openai_real    market_05              steps=6   2253 ->  2253 est (real API cumulative  7400) dropped=0
+Budget sensitivity on multi-step traces (avg bounded peak vs unbounded peak):
+    budget |  avg_full | avg_bounded |         pct |  avg_dropped
+       500 |      2123 |        1879 |       88.5% |          2.1
+      1000 |      2123 |        1896 |       89.3% |          1.7
+      1500 |      2123 |        2106 |       99.2% |          0.1
+      2000 |      2123 |        2123 |      100.0% |          0.0
+      3000 |      2123 |        2123 |      100.0% |          0.0
+      6000 |      2123 |        2123 |      100.0% |          0.0
+
+Scenario-aware system prompt sizes (per-order-type rules):
+  full prompt rule_605_v1.txt tokens  = 768
+  market_01.json             types=['market']             -> 6 sections, 835 tokens
+  market_05.json             types=['market']             -> 6 sections, 835 tokens
+  stop_01.json               types=['stop']               -> 6 sections, 866 tokens
+  stop_limit_01.json         types=['stop_limit']         -> 6 sections, 866 tokens
+  marketable_limit_01.json   types=['limit']              -> 6 sections, 876 tokens
+  midpoint_limit_01.json     types=['limit']              -> 6 sections, 876 tokens
+  multi_exec_01.json         types=['market']             -> 6 sections, 835 tokens
+  edge_case_07.json          types=['market']             -> 6 sections, 835 tokens
+
+End-to-end mock runs across 8 diverse scenarios: all submitted, no exceptions.

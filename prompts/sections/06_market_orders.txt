@@ -1,0 +1,3 @@
+MARKET ORDER CLASSIFICATION:
+- Market orders are always categorized as 'market' and execute at the prevailing NBBO at receipt.
+- Use `classify_order` to confirm the exact category and `calculate_metrics` for spread and price-improvement figures. Do not hand-derive them.

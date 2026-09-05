@@ -1,0 +1,3 @@
+FORMATTING RULES:
+- For rows where no orders exist, the aggregate count columns (num_covered_orders, cumulative_shares, etc.) must be 0, and the metric columns (price_improvement, effective_spread, etc.) MUST BE LEFT BLANK (e.g., `|0|0||||`).
+- Do NOT output per-order rows. You must aggregate the data into the 30 buckets based on your calculations.
