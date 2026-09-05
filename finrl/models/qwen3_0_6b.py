@@ -52,7 +52,7 @@ class Qwen3_0_6B_Runner:
                         quantization_config=quantization_config,
                         device_map={"": 0},
                         attn_implementation="sdpa",
-                        torch_dtype=torch.float16,
+                        dtype=torch.float16,
                         trust_remote_code=True,
                     )
                     self.model.eval()
@@ -103,7 +103,13 @@ class Qwen3_0_6B_Runner:
             inputs = {k: v.to(self.model.device) for k, v in inputs.items()}
 
         with torch.no_grad():
-            with torch.backends.cuda.sdp_kernel(enable_flash=False, enable_math=False, enable_mem_efficient=True):
+            try:
+                from torch.nn.attention import SDPBackend, sdpa_kernel
+                backend_ctx = sdpa_kernel(SDPBackend.EFFICIENT_ATTENTION)
+            except ImportError:
+                backend_ctx = torch.backends.cuda.sdp_kernel(enable_flash=False, enable_math=False, enable_mem_efficient=True)
+                
+            with backend_ctx:
                 outputs = self.model.generate(
                     **inputs,
                     max_new_tokens=min(max_new_tokens, 512),
