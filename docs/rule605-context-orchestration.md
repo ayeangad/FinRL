@@ -1,5 +1,32 @@
 # Context Orchestration for FinRL Rule 605
 
+## 0. Progression at a Glance
+
+```
+Baseline
+   ↓
+Context grew unboundedly (full history replayed every step)
+   ↓
+14K+ tokens / step  (edge_case_10: 14,198 by step 9, still climbing)
+   ↓
+Context failure     (latency/cost growth → hard context-window failure)
+   ↓
+Root-cause analysis (growth is orchestration-replay, not a huge rulebook)
+   ↓
+Conversation windowing  +  scenario-aware context selection
+   ↓
+Bounded ~1.9K peak prompt in completed run  (market_01: 1,888 tokens)
+   ↓
+Context problem eliminated
+   ↓
+Remaining failure -> 0.6B model capability + ~3 tok/s generation
+```
+
+The short version: the first bottleneck (context explosion) is **fixed**. What
+remains is an entirely separate bottleneck — a small model that is too slow and
+too weak to compose the final report. This doc walks through how the two were
+teased apart.
+
 ## 1. Objective
 
 Build a benchmark harness that drives a local LLM agent through SEC Rule 605
