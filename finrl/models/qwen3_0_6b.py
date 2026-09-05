@@ -51,7 +51,7 @@ class Qwen3_0_6B_Runner:
                         self.checkpoint,
                         quantization_config=quantization_config,
                         device_map={"": 0},
-                        attn_implementation="sdpa",
+                        attn_implementation="xformers",
                         trust_remote_code=True,
                     )
                     self.model.eval()
