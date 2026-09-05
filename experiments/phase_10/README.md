@@ -71,21 +71,23 @@ as the rulebook/section library grows — this is the retrieval seam.
 
 ## Real Qwen3-0.6B "after" run
 
-Phase-9 behavior: unbounded history replayed every step; model loops degenerate
-into growing context and failing the task. Phase-10 run on a diverse subset with
-`max_history_tokens=3000`:
+Controlled 5-scenario run (`real_5scenario.txt`; `max_history_tokens=3000`,
+per-scenario subprocess, 600 s wall-cap):
 
 ```
-scenario               strategy       steps    input_tok   score
-market_01.json         scenario_aware    4        6615     0.000
-market_05.json         scenario_aware    4        6613     0.000
+scenario                 type    termination steps input_tok peak_prompt  trunc  dropped elapsed_s  score
+market_01.json           market  submitted      4      6615      1888      0        0     54.9  0.000
+marketable_limit_01.json limit   timeout       -1         0         0      0        0      600  0.000
+midpoint_limit_01.json   limit   timeout       -1         0         0      0        0      600  0.000
+multi_exec_01.json       multi   timeout       -1         0         0      0        0      600  0.000
+stop_01.json             stop    timeout       -1         0         0      0        0      600  0.000
 ```
 
-Both completed runs are short (4 steps), so the 3K history budget is not yet
-binding; the offline replay above exercises the cap, and the unit tests verify
-pruning/recency behaviour directly. The `stop_01` scenario entered a degenerate
-long loop and was stopped after ~35 min — the exact failure mode phase-9 saw,
-which the window is designed to absorb by capping per-step context. Full run:
+The completing scenario terminates normally with bounded context (`market_01`
+peaked at 1,888 real prompt tokens). The other four degenerate into max-length
+generation loops; the window keeps those histories at the 3K budget, but runs
+are still slow (~3 tok/s on GTX 1650 Ti — a 12-step `stop_01` loop ran ~36 min
+before being terminated). Full run:
 `.venv/bin/python -m experiments.phase_10.run_real_after`.
 
 Correctness is unchanged from phase 9 (0% report success at 0.6B — the model does
@@ -96,8 +98,11 @@ write the report.
 ## Commands
 
 ```bash
-# after-system real run
+# controlled real 5-scenario batch (subprocess per scenario, 600 s cap)
 .venv/bin/python -m experiments.phase_10.run_real_after
+
+# single real scenario (no cap, trace saved on completion)
+.venv/bin/python -m experiments.phase_10.run_real_after --run-one stop_01.json --max-steps 12
 
 # offline before/after replay + wiring check
 .venv/bin/python -m experiments.phase_10.validate_context
