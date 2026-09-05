@@ -12,6 +12,7 @@ class StepTrace(BaseModel):
     thought: str = ""
     action: dict[str, Any] | None = None
     tool_result: dict[str, Any] | None = None
+    prompt_tokens: int = 0
     latency_ms: float = 0.0
 
 
