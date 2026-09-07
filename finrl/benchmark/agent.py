@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 from finrl.benchmark.context_selector import ContextSelector
 from finrl.benchmark.react_parser import parse_react_output
-from finrl.benchmark.trace import AgentTrace, StepTrace, save_trace
+from finrl.benchmark.trace import AgentTrace, StepTrace, estimate_cost_usd, save_trace
 from finrl.env.rule_605_env import Rule605Env
 from finrl.env.tools import ToolAction
 from finrl.models.openai import OpenAIRunner
@@ -343,7 +343,7 @@ class QwenAgent(BaseAgent):
                 "input_tokens": total_input_tokens,
                 "output_tokens": total_output_tokens,
                 "total_tokens": total_input_tokens + total_output_tokens,
-                "cost_usd": 0.0,
+                "cost_usd": estimate_cost_usd(total_input_tokens, total_output_tokens, self.name),
                 "termination": termination,
                 "context": _build_context_metrics(self.prompt_strategy, system_prompt, window, selected_sections),
             },
@@ -504,7 +504,7 @@ class OpenAIAgent(BaseAgent):
                 "input_tokens": total_input_tokens,
                 "output_tokens": total_output_tokens,
                 "total_tokens": total_input_tokens + total_output_tokens,
-                "cost_usd": 0.0,
+                "cost_usd": estimate_cost_usd(total_input_tokens, total_output_tokens, self.name),
                 "termination": termination,
                 "context": _build_context_metrics(self.prompt_strategy, system_prompt, window, selected_sections),
             },
@@ -521,3 +521,4 @@ class OpenAIAgent(BaseAgent):
             submitted_pipe=submitted_pipe,
             actions_taken=actions_taken,
         )
+

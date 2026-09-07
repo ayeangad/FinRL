@@ -18,6 +18,8 @@ class ScenarioResult(BaseModel):
     invalid_actions: int = 0
     latency_ms: float = 0.0
     cost_usd: float = 0.0
+    dense_reward: float = Field(default=0.0, ge=0.0, le=1.0)
+    row_coverage: float = Field(default=0.0, ge=0.0, le=1.0)
 
 
 class BenchmarkResult(BaseModel):

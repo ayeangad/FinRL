@@ -39,6 +39,22 @@ class AgentTrace(BaseModel):
     )
 
 
+# Per-1K-token prices (USD). Local models cost ~ electricity; API models billed.
+TOKEN_PRICES_USD_PER_1K: dict[str, dict[str, float]] = {
+    "qwen_mock": {"input": 0.0, "output": 0.0},
+    "qwen_real": {"input": 0.0, "output": 0.0},
+    "openai_mock": {"input": 0.0, "output": 0.0},
+    "openai_real": {"input": 0.002, "output": 0.008},
+    "default": {"input": 0.0, "output": 0.0},
+}
+
+
+def estimate_cost_usd(input_tokens: int, output_tokens: int, model_name: str = "default") -> float:
+    key = model_name if model_name in TOKEN_PRICES_USD_PER_1K else "default"
+    prices = TOKEN_PRICES_USD_PER_1K[key]
+    return round(input_tokens / 1000 * prices["input"] + output_tokens / 1000 * prices["output"], 6)
+
+
 def save_trace(trace: AgentTrace, base_dir: Path | str = "traces") -> Path:
     out_dir = Path(base_dir) / trace.prompt_version / trace.model_name
     out_dir.mkdir(parents=True, exist_ok=True)

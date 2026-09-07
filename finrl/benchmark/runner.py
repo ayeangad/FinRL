@@ -7,7 +7,9 @@ from finrl.benchmark.agent import BaseAgent
 from finrl.benchmark.config import BenchmarkConfig
 from finrl.benchmark.evaluator import evaluate_submission
 from finrl.benchmark.result import BenchmarkResult, ScenarioResult
+from finrl.benchmark.trace import estimate_cost_usd
 from finrl.env.rule_605_env import Rule605Env
+from finrl.rl.reward import dense_report_reward
 
 
 def _percentile(values: Sequence[float], p: float) -> float:
@@ -63,6 +65,7 @@ class BenchmarkRunner:
                 submitted_pipe=trajectory.submitted_pipe,
                 ground_truth_pipe=env.ground_truth_pipe,
             )
+            dense = dense_report_reward(trajectory.submitted_pipe, env.ground_truth_pipe)
 
             res = ScenarioResult(
                 scenario_id=s_path.stem,
@@ -80,7 +83,9 @@ class BenchmarkRunner:
                 steps=trajectory.steps_count,
                 invalid_actions=trajectory.invalid_actions_count,
                 latency_ms=latency_ms,
-                cost_usd=0.0,
+                cost_usd=estimate_cost_usd(trajectory.tool_calls_count * 500, 200, agent.name),
+                dense_reward=dense["reward"],
+                row_coverage=dense["row_coverage"],
             )
             scenario_results.append(res)
 
