@@ -98,16 +98,35 @@ class Rule605Env:
 
         elif action.tool_name == "get_quote":
             ts_str = action.arguments.get("timestamp")
-            ts = datetime.fromisoformat(ts_str) if ts_str else None
-            domain_orders, market, _ = parse_scenario(self.scenario)
-            quote = market.quote_at(ts) if ts else None
+            try:
+                ts = datetime.fromisoformat(ts_str) if ts_str else None
+                domain_orders, market, _ = parse_scenario(self.scenario)
+                quote = market.quote_at(ts) if ts else None
+            except (ValueError, TypeError):
+                quote = None
             tool_output = quote.model_dump(mode="json") if quote else None
 
         elif action.tool_name == "get_quotes":
             start_str = action.arguments.get("start_time")
             end_str = action.arguments.get("end_time")
-            start = datetime.fromisoformat(start_str) if start_str else datetime.min.replace(tzinfo=UTC)
-            end = datetime.fromisoformat(end_str) if end_str else datetime.max.replace(tzinfo=UTC)
+
+            def _parse(ts_str: str | None, default: datetime) -> datetime:
+                if not ts_str:
+                    return default
+                try:
+                    return datetime.fromisoformat(ts_str)
+                except ValueError:
+                    return default
+
+            start = _parse(start_str, datetime.min)
+            end = _parse(end_str, datetime.max)
+            # Normalize tz-awareness to match stored quotes (mixed naive/aware data).
+            probe = self.scenario.quotes[0].timestamp if self.scenario.quotes else None
+            if probe is not None and probe.tzinfo is None:
+                if start.tzinfo is not None:
+                    start = start.replace(tzinfo=None)
+                if end.tzinfo is not None:
+                    end = end.replace(tzinfo=None)
             matching = [
                 q.model_dump(mode="json")
                 for q in self.scenario.quotes
