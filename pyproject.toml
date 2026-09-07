@@ -17,6 +17,9 @@ dependencies = [
 dev = [
     "pytest",
 ]
+rl = [
+    "gymnasium",
+]
 openai = [
     "openai",
 ]

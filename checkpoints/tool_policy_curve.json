@@ -1,0 +1,154 @@
+[
+  {
+    "loss": -0.0118,
+    "mean_return": 1.6069,
+    "baseline": 1.6069,
+    "episodes": 16,
+    "episode": 16,
+    "mean_dense": 0.525
+  },
+  {
+    "loss": -0.0159,
+    "mean_return": 0.7103,
+    "baseline": 0.7103,
+    "episodes": 16,
+    "episode": 32,
+    "mean_dense": 0.2281
+  },
+  {
+    "loss": -0.0316,
+    "mean_return": 1.539,
+    "baseline": 1.539,
+    "episodes": 16,
+    "episode": 48,
+    "mean_dense": 0.4656
+  },
+  {
+    "loss": -0.0305,
+    "mean_return": 0.9824,
+    "baseline": 0.9824,
+    "episodes": 16,
+    "episode": 64,
+    "mean_dense": 0.2281
+  },
+  {
+    "loss": -0.0365,
+    "mean_return": 1.4218,
+    "baseline": 1.4218,
+    "episodes": 16,
+    "episode": 80,
+    "mean_dense": 0.4656
+  },
+  {
+    "loss": -0.0478,
+    "mean_return": 1.3585,
+    "baseline": 1.3585,
+    "episodes": 16,
+    "episode": 96,
+    "mean_dense": 0.3469
+  },
+  {
+    "loss": -0.0623,
+    "mean_return": 1.5246,
+    "baseline": 1.5246,
+    "episodes": 16,
+    "episode": 112,
+    "mean_dense": 0.4062
+  },
+  {
+    "loss": -0.0684,
+    "mean_return": 1.9177,
+    "baseline": 1.9177,
+    "episodes": 16,
+    "episode": 128,
+    "mean_dense": 0.525
+  },
+  {
+    "loss": -0.0629,
+    "mean_return": 1.8534,
+    "baseline": 1.8534,
+    "episodes": 16,
+    "episode": 144,
+    "mean_dense": 0.525
+  },
+  {
+    "loss": -0.0987,
+    "mean_return": 1.8431,
+    "baseline": 1.8431,
+    "episodes": 16,
+    "episode": 160,
+    "mean_dense": 0.4656
+  },
+  {
+    "loss": -0.1485,
+    "mean_return": 1.884,
+    "baseline": 1.884,
+    "episodes": 16,
+    "episode": 176,
+    "mean_dense": 0.4656
+  },
+  {
+    "loss": -0.0902,
+    "mean_return": 1.6738,
+    "baseline": 1.6738,
+    "episodes": 16,
+    "episode": 192,
+    "mean_dense": 0.525
+  },
+  {
+    "loss": -0.0645,
+    "mean_return": 2.0521,
+    "baseline": 2.0521,
+    "episodes": 16,
+    "episode": 208,
+    "mean_dense": 0.5844
+  },
+  {
+    "loss": -0.1077,
+    "mean_return": 1.0235,
+    "baseline": 1.0235,
+    "episodes": 16,
+    "episode": 224,
+    "mean_dense": 0.3469
+  },
+  {
+    "loss": -0.1104,
+    "mean_return": 1.4178,
+    "baseline": 1.4178,
+    "episodes": 16,
+    "episode": 240,
+    "mean_dense": 0.4062
+  },
+  {
+    "loss": -0.1283,
+    "mean_return": 1.1507,
+    "baseline": 1.1507,
+    "episodes": 16,
+    "episode": 256,
+    "mean_dense": 0.2875
+  },
+  {
+    "loss": -0.1097,
+    "mean_return": 1.2307,
+    "baseline": 1.2307,
+    "episodes": 16,
+    "episode": 272,
+    "mean_dense": 0.3469
+  },
+  {
+    "loss": -0.1822,
+    "mean_return": 1.6468,
+    "baseline": 1.6468,
+    "episodes": 16,
+    "episode": 288,
+    "mean_dense": 0.4656
+  },
+  {
+    "loss": -0.1826,
+    "mean_return": 1.8391,
+    "baseline": 1.8391,
+    "episodes": 12,
+    "episode": 300,
+    "mean_dense": 0.525
+  }
+]
