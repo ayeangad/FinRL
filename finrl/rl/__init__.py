@@ -48,7 +48,10 @@ def _register_envs() -> None:
         except Exception:
             continue
     try:
-        from finrl.rl import compose_env  # noqa: F401
+        import finrl.rl.compose_env as _ce  # noqa: F401
+
+        if "finrl/Rule605Compose-v0" not in gym.registry:
+            gym.register(id="finrl/Rule605Compose-v0", entry_point="finrl.rl.compose_env:Rule605ComposeEnv")
     except Exception:
         pass
 
