@@ -1,0 +1,159 @@
+{
+  "env": "finrl/Rule605Tool-v0",
+  "split": "val",
+  "max_steps": 12,
+  "seed": 0,
+  "timestamp": "2026-09-17T23:40:20",
+  "policies": {
+    "random": {
+      "policy": "random",
+      "n": 12,
+      "mean_dense": 0.4458,
+      "std_dense": 0.4684,
+      "success_rate": 0.4167,
+      "mean_steps": 2.33,
+      "per_scenario": [
+        {
+          "scenario": "market_05",
+          "dense": 1.0,
+          "steps": 4
+        },
+        {
+          "scenario": "market_07",
+          "dense": 0.05,
+          "steps": 2
+        },
+        {
+          "scenario": "market_10",
+          "dense": 0.05,
+          "steps": 1
+        },
+        {
+          "scenario": "marketable_limit_02",
+          "dense": 0.05,
+          "steps": 1
+        },
+        {
+          "scenario": "multi_exec_02",
+          "dense": 0.05,
+          "steps": 1
+        },
+        {
+          "scenario": "non_marketable_limit_11",
+          "dense": 0.05,
+          "steps": 1
+        },
+        {
+          "scenario": "realized_horizon_06",
+          "dense": 1.0,
+          "steps": 4
+        },
+        {
+          "scenario": "realized_horizon_08",
+          "dense": 1.0,
+          "steps": 3
+        },
+        {
+          "scenario": "size_boundary_05",
+          "dense": 0.05,
+          "steps": 1
+        },
+        {
+          "scenario": "stop_10",
+          "dense": 1.0,
+          "steps": 5
+        },
+        {
+          "scenario": "stop_limit_02",
+          "dense": 1.0,
+          "steps": 4
+        },
+        {
+          "scenario": "stop_limit_05",
+          "dense": 0.05,
+          "steps": 1
+        }
+      ]
+    },
+    "reinforce": {
+      "policy": "reinforce",
+      "checkpoint": "checkpoints/tool_policy.npz",
+      "n": 12,
+      "mean_dense": 0.6042,
+      "std_dense": 0.4684,
+      "success_rate": 0.5833,
+      "mean_steps": 2.33
+    },
+    "ppo": {
+      "policy": "ppo",
+      "model": "checkpoints/ppo_tool.zip",
+      "n": 12,
+      "mean_dense": 1.0,
+      "std_dense": 0.0,
+      "success_rate": 1.0,
+      "mean_steps": 3.0,
+      "per_scenario": [
+        {
+          "scenario": "market_05",
+          "dense": 1.0,
+          "steps": 3
+        },
+        {
+          "scenario": "market_07",
+          "dense": 1.0,
+          "steps": 3
+        },
+        {
+          "scenario": "market_10",
+          "dense": 1.0,
+          "steps": 3
+        },
+        {
+          "scenario": "marketable_limit_02",
+          "dense": 1.0,
+          "steps": 3
+        },
+        {
+          "scenario": "multi_exec_02",
+          "dense": 1.0,
+          "steps": 3
+        },
+        {
+          "scenario": "non_marketable_limit_11",
+          "dense": 1.0,
+          "steps": 3
+        },
+        {
+          "scenario": "realized_horizon_06",
+          "dense": 1.0,
+          "steps": 3
+        },
+        {
+          "scenario": "realized_horizon_08",
+          "dense": 1.0,
+          "steps": 3
+        },
+        {
+          "scenario": "size_boundary_05",
+          "dense": 1.0,
+          "steps": 3
+        },
+        {
+          "scenario": "stop_10",
+          "dense": 1.0,
+          "steps": 3
+        },
+        {
+          "scenario": "stop_limit_02",
+          "dense": 1.0,
+          "steps": 3
+        },
+        {
+          "scenario": "stop_limit_05",
+          "dense": 1.0,
+          "steps": 3
+        }
+      ]
+    }
+  }
+}

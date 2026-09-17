@@ -1,154 +1,306 @@
 [
   {
-    "loss": -0.0118,
-    "mean_return": 1.6069,
-    "baseline": 1.6069,
-    "episodes": 16,
+    "loss": 0.0032,
+    "mean_return": 0.8638,
+    "baseline": 0.8638,
+    "episodes": 8,
+    "episode": 8,
+    "mean_dense": 0.2875
+  },
+  {
+    "loss": 0.0059,
+    "mean_return": 1.7269,
+    "baseline": 1.7269,
+    "episodes": 8,
     "episode": 16,
     "mean_dense": 0.525
   },
   {
-    "loss": -0.0159,
-    "mean_return": 0.7103,
-    "baseline": 0.7103,
-    "episodes": 16,
+    "loss": 0.0163,
+    "mean_return": 1.9606,
+    "baseline": 1.9606,
+    "episodes": 8,
+    "episode": 24,
+    "mean_dense": 0.5221
+  },
+  {
+    "loss": -0.0052,
+    "mean_return": 0.508,
+    "baseline": 0.508,
+    "episodes": 8,
     "episode": 32,
-    "mean_dense": 0.2281
+    "mean_dense": 0.1688
   },
   {
-    "loss": -0.0316,
-    "mean_return": 1.539,
-    "baseline": 1.539,
-    "episodes": 16,
+    "loss": 0.0006,
+    "mean_return": 0.0854,
+    "baseline": 0.0854,
+    "episodes": 8,
+    "episode": 40,
+    "mean_dense": 0.05
+  },
+  {
+    "loss": 0.0,
+    "mean_return": 0.4846,
+    "baseline": 0.4846,
+    "episodes": 8,
     "episode": 48,
-    "mean_dense": 0.4656
+    "mean_dense": 0.1688
   },
   {
-    "loss": -0.0305,
-    "mean_return": 0.9824,
-    "baseline": 0.9824,
-    "episodes": 16,
+    "loss": -0.0067,
+    "mean_return": 0.8727,
+    "baseline": 0.8727,
+    "episodes": 8,
+    "episode": 56,
+    "mean_dense": 0.2875
+  },
+  {
+    "loss": -0.0208,
+    "mean_return": 1.5005,
+    "baseline": 1.5005,
+    "episodes": 8,
     "episode": 64,
-    "mean_dense": 0.2281
+    "mean_dense": 0.4062
   },
   {
-    "loss": -0.0365,
-    "mean_return": 1.4218,
-    "baseline": 1.4218,
-    "episodes": 16,
+    "loss": -0.0093,
+    "mean_return": 1.2309,
+    "baseline": 1.2309,
+    "episodes": 8,
+    "episode": 72,
+    "mean_dense": 0.4062
+  },
+  {
+    "loss": -0.0066,
+    "mean_return": 0.5005,
+    "baseline": 0.5005,
+    "episodes": 8,
     "episode": 80,
-    "mean_dense": 0.4656
+    "mean_dense": 0.1688
   },
   {
-    "loss": -0.0478,
-    "mean_return": 1.3585,
-    "baseline": 1.3585,
-    "episodes": 16,
+    "loss": -0.0085,
+    "mean_return": 0.5549,
+    "baseline": 0.5549,
+    "episodes": 8,
+    "episode": 88,
+    "mean_dense": 0.1688
+  },
+  {
+    "loss": -0.0239,
+    "mean_return": 1.8235,
+    "baseline": 1.8235,
+    "episodes": 8,
     "episode": 96,
-    "mean_dense": 0.3469
+    "mean_dense": 0.525
   },
   {
-    "loss": -0.0623,
-    "mean_return": 1.5246,
-    "baseline": 1.5246,
-    "episodes": 16,
+    "loss": -0.0276,
+    "mean_return": 1.9828,
+    "baseline": 1.9828,
+    "episodes": 8,
+    "episode": 104,
+    "mean_dense": 0.6438
+  },
+  {
+    "loss": -0.0327,
+    "mean_return": 1.3451,
+    "baseline": 1.3451,
+    "episodes": 8,
     "episode": 112,
     "mean_dense": 0.4062
   },
   {
-    "loss": -0.0684,
-    "mean_return": 1.9177,
-    "baseline": 1.9177,
-    "episodes": 16,
+    "loss": -0.0167,
+    "mean_return": 0.4933,
+    "baseline": 0.4933,
+    "episodes": 8,
+    "episode": 120,
+    "mean_dense": 0.1688
+  },
+  {
+    "loss": -0.0184,
+    "mean_return": 0.4988,
+    "baseline": 0.4988,
+    "episodes": 8,
     "episode": 128,
-    "mean_dense": 0.525
+    "mean_dense": 0.1688
   },
   {
-    "loss": -0.0629,
-    "mean_return": 1.8534,
-    "baseline": 1.8534,
-    "episodes": 16,
-    "episode": 144,
-    "mean_dense": 0.525
-  },
-  {
-    "loss": -0.0987,
-    "mean_return": 1.8431,
-    "baseline": 1.8431,
-    "episodes": 16,
-    "episode": 160,
-    "mean_dense": 0.4656
-  },
-  {
-    "loss": -0.1485,
-    "mean_return": 1.884,
-    "baseline": 1.884,
-    "episodes": 16,
-    "episode": 176,
-    "mean_dense": 0.4656
-  },
-  {
-    "loss": -0.0902,
-    "mean_return": 1.6738,
-    "baseline": 1.6738,
-    "episodes": 16,
-    "episode": 192,
-    "mean_dense": 0.525
-  },
-  {
-    "loss": -0.0645,
-    "mean_return": 2.0521,
-    "baseline": 2.0521,
-    "episodes": 16,
-    "episode": 208,
-    "mean_dense": 0.5844
-  },
-  {
-    "loss": -0.1077,
-    "mean_return": 1.0235,
-    "baseline": 1.0235,
-    "episodes": 16,
-    "episode": 224,
-    "mean_dense": 0.3469
-  },
-  {
-    "loss": -0.1104,
-    "mean_return": 1.4178,
-    "baseline": 1.4178,
-    "episodes": 16,
-    "episode": 240,
+    "loss": -0.0439,
+    "mean_return": 1.3422,
+    "baseline": 1.3422,
+    "episodes": 8,
+    "episode": 136,
     "mean_dense": 0.4062
   },
   {
-    "loss": -0.1283,
-    "mean_return": 1.1507,
-    "baseline": 1.1507,
-    "episodes": 16,
+    "loss": -0.0013,
+    "mean_return": 0.0854,
+    "baseline": 0.0854,
+    "episodes": 8,
+    "episode": 144,
+    "mean_dense": 0.05
+  },
+  {
+    "loss": -0.0629,
+    "mean_return": 1.579,
+    "baseline": 1.579,
+    "episodes": 8,
+    "episode": 152,
+    "mean_dense": 0.4062
+  },
+  {
+    "loss": -0.0589,
+    "mean_return": 1.354,
+    "baseline": 1.354,
+    "episodes": 8,
+    "episode": 160,
+    "mean_dense": 0.4062
+  },
+  {
+    "loss": -0.0554,
+    "mean_return": 1.3588,
+    "baseline": 1.3588,
+    "episodes": 8,
+    "episode": 168,
+    "mean_dense": 0.4062
+  },
+  {
+    "loss": -0.0762,
+    "mean_return": 1.7146,
+    "baseline": 1.7146,
+    "episodes": 8,
+    "episode": 176,
+    "mean_dense": 0.525
+  },
+  {
+    "loss": -0.0649,
+    "mean_return": 1.3564,
+    "baseline": 1.3564,
+    "episodes": 8,
+    "episode": 184,
+    "mean_dense": 0.4062
+  },
+  {
+    "loss": -0.074,
+    "mean_return": 2.2289,
+    "baseline": 2.2289,
+    "episodes": 8,
+    "episode": 192,
+    "mean_dense": 0.6438
+  },
+  {
+    "loss": -0.0037,
+    "mean_return": 0.1115,
+    "baseline": 0.1115,
+    "episodes": 8,
+    "episode": 200,
+    "mean_dense": 0.05
+  },
+  {
+    "loss": -0.0614,
+    "mean_return": 1.2338,
+    "baseline": 1.2338,
+    "episodes": 8,
+    "episode": 208,
+    "mean_dense": 0.4062
+  },
+  {
+    "loss": -0.0788,
+    "mean_return": 0.8255,
+    "baseline": 0.8255,
+    "episodes": 8,
+    "episode": 216,
+    "mean_dense": 0.2875
+  },
+  {
+    "loss": -0.0622,
+    "mean_return": 2.1098,
+    "baseline": 2.1098,
+    "episodes": 8,
+    "episode": 224,
+    "mean_dense": 0.6438
+  },
+  {
+    "loss": -0.0738,
+    "mean_return": 0.9761,
+    "baseline": 0.9761,
+    "episodes": 8,
+    "episode": 232,
+    "mean_dense": 0.2875
+  },
+  {
+    "loss": -0.1279,
+    "mean_return": 1.8377,
+    "baseline": 1.8377,
+    "episodes": 8,
+    "episode": 240,
+    "mean_dense": 0.525
+  },
+  {
+    "loss": -0.1087,
+    "mean_return": 2.692,
+    "baseline": 2.692,
+    "episodes": 8,
+    "episode": 248,
+    "mean_dense": 0.6438
+  },
+  {
+    "loss": -0.0932,
+    "mean_return": 0.9746,
+    "baseline": 0.9746,
+    "episodes": 8,
     "episode": 256,
     "mean_dense": 0.2875
   },
   {
-    "loss": -0.1097,
-    "mean_return": 1.2307,
-    "baseline": 1.2307,
-    "episodes": 16,
-    "episode": 272,
-    "mean_dense": 0.3469
-  },
-  {
-    "loss": -0.1822,
-    "mean_return": 1.6468,
-    "baseline": 1.6468,
-    "episodes": 16,
-    "episode": 288,
-    "mean_dense": 0.4656
-  },
-  {
-    "loss": -0.1826,
-    "mean_return": 1.8391,
-    "baseline": 1.8391,
-    "episodes": 12,
-    "episode": 300,
+    "loss": -0.1467,
+    "mean_return": 1.7122,
+    "baseline": 1.7122,
+    "episodes": 8,
+    "episode": 264,
     "mean_dense": 0.525
+  },
+  {
+    "loss": -0.1745,
+    "mean_return": 1.4503,
+    "baseline": 1.4503,
+    "episodes": 8,
+    "episode": 272,
+    "mean_dense": 0.4062
+  },
+  {
+    "loss": -0.0816,
+    "mean_return": 1.8731,
+    "baseline": 1.8731,
+    "episodes": 8,
+    "episode": 280,
+    "mean_dense": 0.525
+  },
+  {
+    "loss": -0.1544,
+    "mean_return": 2.4493,
+    "baseline": 2.4493,
+    "episodes": 8,
+    "episode": 288,
+    "mean_dense": 0.525
+  },
+  {
+    "loss": -0.1471,
+    "mean_return": 2.2212,
+    "baseline": 2.2212,
+    "episodes": 8,
+    "episode": 296,
+    "mean_dense": 0.525
+  },
+  {
+    "loss": -0.0133,
+    "mean_return": 3.8245,
+    "baseline": 3.8245,
+    "episodes": 4,
+    "episode": 300,
+    "mean_dense": 1.0
   }
 ]

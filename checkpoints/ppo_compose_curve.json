@@ -1,0 +1,37 @@
+[
+  {
+    "eval_idx": 0,
+    "timesteps": 10000,
+    "mean_reward": 0.028,
+    "std_reward": 0.066,
+    "mean_len": 1.4
+  },
+  {
+    "eval_idx": 1,
+    "timesteps": 20000,
+    "mean_reward": 0.05,
+    "std_reward": 0.0,
+    "mean_len": 1.0
+  },
+  {
+    "eval_idx": 2,
+    "timesteps": 30000,
+    "mean_reward": 0.05,
+    "std_reward": 0.0,
+    "mean_len": 1.0
+  },
+  {
+    "eval_idx": 3,
+    "timesteps": 40000,
+    "mean_reward": 0.05,
+    "std_reward": 0.0,
+    "mean_len": 1.0
+  },
+  {
+    "eval_idx": 4,
+    "timesteps": 50000,
+    "mean_reward": 0.05,
+    "std_reward": 0.0,
+    "mean_len": 1.0
+  }
+]
