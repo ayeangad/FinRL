@@ -1,8 +1,7 @@
 # FINRL — SEC Rule 605 RL Environments + Agent Benchmark
 
-A reproducible framework for SEC **Rule 605** reporting as **reinforcement
-learning**: two registered Gymnasium MDPs with verifiable dense rewards,
-plus the original local-LLM agent benchmark with context orchestration.
+Gymnasium MDPs [2] for SEC Rule 605 reporting [9] with deterministic
+verifiable rewards, plus a local-LLM agent benchmark over the same simulator.
 
 ```python
 import finrl.rl  # registers envs
@@ -11,11 +10,13 @@ env = gym.make("finrl/Rule605Tool-v0", max_steps=12)
 obs, info = env.reset(seed=0, options={"scenario": "scenarios/v0.1/golden/market_01.json"})
 ```
 
-- **Tool MDP** (`finrl/Rule605Tool-v0`, full: `finrl/Rule605ToolFull-v0`): `MultiDiscrete` tool+slot actions, `Dict` observations, evidence-conditioned submit (no ground-truth copy), shaped rewards + `dense_report_reward`. See `docs/gym_env.md`.
-- **Compose MDP** (`finrl/Rule605Compose-v0`): predict `category × bucket` (30 combos) per order with a grounding gate — no oracle tools, the agent composes the structure itself.
-- **Classic RL:** `python -m finrl.rl.train_sb3 --env tool --timesteps 50000` (PPO) + `python -m finrl.rl.evaluate --split test --policies random,reinforce,ppo`.
-- **RLVR/LLM:** `checkpoints/rlvr_dataset.jsonl` (train-split) + `python -m finrl.rl.train_grpo_stub --smoke` with `dense_report_reward` as the verifiable reward.
-- **LLM benchmark** (original work below): driving local LLM agents through the same scenarios and measuring correctness + context efficiency.
+- **Tool MDP** (`finrl/Rule605Tool-v0`; full: `finrl/Rule605ToolFull-v0`): evidence gathering with an evidence-conditioned submit path. Specification: `docs/gym_env.md` §2.
+- **Compose MDP** (`finrl/Rule605Compose-v0`): per-slot `category × bucket` prediction with a grounding gate; no privileged tools. Specification: `docs/gym_env.md` §3.
+- **Classic RL:** PPO [4] via Stable-Baselines3 [5] (`finrl/rl/train_sb3.py`); REINFORCE [3] linear baseline (`finrl/rl/train.py`); seeded eval (`finrl/rl/evaluate.py`).
+- **RLVR/LLM:** train-split `{prompt, ground_truth_pipe}` export plus a GRPO-style [7] outcome-reward stub [8] (`finrl/rl/dataset.py`, `finrl/rl/train_grpo_stub.py`).
+- **LLM benchmark** (remainder of this file): ReAct agents with bounded context over the same scenarios.
+
+References: `docs/REFERENCES.md`. Results: `experiments/rl/README.md`.
 
 This repository is a single end-to-end research instrument: it generates
 realistic order/fill scenarios, exposes them through a Gym-style agent
@@ -440,25 +441,25 @@ pip install -e ".[dev,local_llm]"       # CPU-only tests + local LLM stack
 pytest tests/ -q        # 340+ passing (gym API, no-oracle, compose, SB3, RLVR, + legacy)
 ```
 
-### Run the RL environments (new)
+### Run the RL environments
 
 ```bash
-pip install -e ".[rl]"      # gymnasium + stable-baselines3
+pip install -e ".[rl]"      # gymnasium [2] + stable-baselines3 [5]
 ./.venv/bin/python -m finrl.rl.demo --env tool       # 30-sec gym.make demo
 ./.venv/bin/python -m finrl.rl.train_sb3 --env tool --timesteps 50000
 ./.venv/bin/python -m finrl.rl.evaluate --env tool --split test --policies random,reinforce,ppo
-./.venv/bin/python -m finrl.rl.train_grpo_stub --smoke   # RLVR track (CPU)
+./.venv/bin/python -m finrl.rl.train_grpo_stub --smoke   # RLVR reward seam [8], CPU
 ```
 
-Headline results (`experiments/rl/`, deterministic `seed=0`, Tool MDP test split):
+Observed test-split outcomes (Tool MDP, `max_steps=12`, `seed=0`; full rows in `experiments/rl/`):
 
-| policy | mean_dense | success | steps |
-|--------|------------|---------|-------|
+| policy | mean dense | success (≥0.95) | mean steps |
+|--------|------------|-----------------|------------|
 | random | 0.286 | 0.250 | 2.2 |
-| reinforce (linear) | 0.584 | 0.562 | 2.2 |
-| ppo (`checkpoints/ppo_tool.zip`) | 1.000 | 1.000 | 3.3 |
+| REINFORCE, linear [3] | 0.584 | 0.562 | 2.2 |
+| PPO [4] (`checkpoints/ppo_tool.zip`) | 1.000 | 1.000 | 3.3 |
 
-Compose MDP test (hard): random `0.006`, PPO `0.050` — motivates the GRPO/LLM track. Full env card: `docs/gym_env.md`.
+Compose MDP at the same budget: random 0.006, PPO 0.050. The gap is reported as a limitation (`docs/gym_env.md` §6), not a result to tune around in prose.
 
 ### Run the benchmark CLI
 
