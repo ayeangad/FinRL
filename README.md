@@ -1,7 +1,21 @@
-# FINRL — SEC Rule 605 Agent Benchmark
+# FINRL — SEC Rule 605 RL Environments + Agent Benchmark
 
-A reproducible framework for driving **local LLM agents** through SEC **Rule 605**
-reporting scenarios and measuring both *correctness* and *context efficiency*.
+A reproducible framework for SEC **Rule 605** reporting as **reinforcement
+learning**: two registered Gymnasium MDPs with verifiable dense rewards,
+plus the original local-LLM agent benchmark with context orchestration.
+
+```python
+import finrl.rl  # registers envs
+import gymnasium as gym
+env = gym.make("finrl/Rule605Tool-v0", max_steps=12)
+obs, info = env.reset(seed=0, options={"scenario": "scenarios/v0.1/golden/market_01.json"})
+```
+
+- **Tool MDP** (`finrl/Rule605Tool-v0`, full: `finrl/Rule605ToolFull-v0`): `MultiDiscrete` tool+slot actions, `Dict` observations, evidence-conditioned submit (no ground-truth copy), shaped rewards + `dense_report_reward`. See `docs/gym_env.md`.
+- **Compose MDP** (`finrl/Rule605Compose-v0`): predict `category × bucket` (30 combos) per order with a grounding gate — no oracle tools, the agent composes the structure itself.
+- **Classic RL:** `python -m finrl.rl.train_sb3 --env tool --timesteps 50000` (PPO) + `python -m finrl.rl.evaluate --split test --policies random,reinforce,ppo`.
+- **RLVR/LLM:** `checkpoints/rlvr_dataset.jsonl` (train-split) + `python -m finrl.rl.train_grpo_stub --smoke` with `dense_report_reward` as the verifiable reward.
+- **LLM benchmark** (original work below): driving local LLM agents through the same scenarios and measuring correctness + context efficiency.
 
 This repository is a single end-to-end research instrument: it generates
 realistic order/fill scenarios, exposes them through a Gym-style agent
@@ -94,11 +108,14 @@ the task demands.
 
 ## Architecture
 
-The system competes a set of **agents** against a shared environment. Unlike a
-pure RL formulation, the environment is *grounded*: it exposes deterministic
-tool outputs derived directly from the ground-truth data, so the agent has
-everything it needs to succeed. This isolates the model's ability to *reason and
-format* from the difficulty of *guessing*.
+The system competes a set of **agents** against a shared environment across
+two interfaces over the same simulator. The **Gymnasium RL interface**
+(`finrl/rl/`, `docs/gym_env.md`) is the primary trainable MDP: discrete
+tool/predict actions, fixed-size `Dict` observations, seeded `reset()`,
+shaped + dense verifiable rewards, train/val/test splits. The **LLM agent
+interface** (`finrl/benchmark/`, below) drives ReAct prompts through the same
+scenarios with deterministic ground-truth tools, isolating the model's
+ability to *reason and format* from the difficulty of *guessing*.
 
 ```
           ┌────────────────────────────────────────────────────────┐
@@ -521,7 +538,19 @@ finrl/
     trace.py            StepTrace (per-step prompt_tokens), AgentTrace (termination)
     runner.py           benchmark CLI driver
   domain/               order / execution / market / quote models
-  env/                  rule_605_env.py (Gym), tools.py, state.py
+  env/                  rule_605_env.py (deterministic simulator), tools.py, state.py
+  rl/                   Gymnasium MDPs + training (the RL environment)
+    gym_env.py          Rule605Tool-v0 / ToolFull-v0 (MultiDiscrete, evidence submit)
+    compose_env.py      Rule605Compose-v0 (predict category x bucket, grounding gate)
+    splits.py           hash-stable 70/15/15 train/val/test
+    train.py            REINFORCE linear baseline
+    train_sb3.py        PPO (classic track)
+    evaluate.py         unified eval harness (random/reinforce/ppo)
+    dataset.py          RLVR export (train-split, no GT leak)
+    train_grpo_stub.py  TRL GRPO stub + CPU smoke (RLVR track)
+    demo.py             30-sec gym.make demo
+    reward.py           dense_report_reward verifiable reward
+  scenario_gen.py       seeded procedural scenario generator
   evals/                order_evaluator
   models/               qwen3_0_6b.py (runner), openai.py (runner)
   rules/                classification, eligibility, metrics, report builder
@@ -530,10 +559,13 @@ prompts/
   rule_605_v1.txt       monolithic baseline (fallback / full strategy)
   sections/             00–08 modular rule sections
 scenarios/v0.1/golden/  100 scenarios (+ ground-truth .pipe reports)
+docs/
+  gym_env.md            RL env card (MDP, spaces, rewards, splits, training)
 experiments/
   phase_10/             validate_context.py, run_real_after.py, README,
                         validation_report.txt, real_5scenario.txt
-tests/                  287 tests (windows, selector, rules, env, domain)
+  rl/                   splits.json, eval*.json, PPO curves (generated)
+tests/                  320+ tests (gym API, no-oracle, compose, splits/gen, SB3, RLVR, + legacy)
 traces/                 per-run JSON traces (gitignored)
 ```
 
