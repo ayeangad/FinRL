@@ -437,8 +437,28 @@ pip install -e ".[dev,local_llm]"       # CPU-only tests + local LLM stack
 ### Run the tests
 
 ```bash
-pytest tests/ -q        # 287 passing
+pytest tests/ -q        # 340+ passing (gym API, no-oracle, compose, SB3, RLVR, + legacy)
 ```
+
+### Run the RL environments (new)
+
+```bash
+pip install -e ".[rl]"      # gymnasium + stable-baselines3
+./.venv/bin/python -m finrl.rl.demo --env tool       # 30-sec gym.make demo
+./.venv/bin/python -m finrl.rl.train_sb3 --env tool --timesteps 50000
+./.venv/bin/python -m finrl.rl.evaluate --env tool --split test --policies random,reinforce,ppo
+./.venv/bin/python -m finrl.rl.train_grpo_stub --smoke   # RLVR track (CPU)
+```
+
+Headline results (`experiments/rl/`, deterministic `seed=0`, Tool MDP test split):
+
+| policy | mean_dense | success | steps |
+|--------|------------|---------|-------|
+| random | 0.286 | 0.250 | 2.2 |
+| reinforce (linear) | 0.584 | 0.562 | 2.2 |
+| ppo (`checkpoints/ppo_tool.zip`) | 1.000 | 1.000 | 3.3 |
+
+Compose MDP test (hard): random `0.006`, PPO `0.050` — motivates the GRPO/LLM track. Full env card: `docs/gym_env.md`.
 
 ### Run the benchmark CLI
 
