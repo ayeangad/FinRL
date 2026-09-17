@@ -3,25 +3,25 @@
   "split": "train",
   "max_steps": 12,
   "seed": 0,
-  "timestamp": "2026-09-17T23:39:47",
+  "timestamp": "2026-09-17T23:47:53",
   "policies": {
     "random": {
       "policy": "random",
       "n": 72,
-      "mean_dense": 0.4187,
-      "std_dense": 0.4637,
-      "success_rate": 0.3889,
-      "mean_steps": 3.24,
+      "mean_dense": 0.3532,
+      "std_dense": 0.4425,
+      "success_rate": 0.3194,
+      "mean_steps": 2.71,
       "per_scenario": [
         {
           "scenario": "edge_case_02",
-          "dense": 0.05,
-          "steps": 1
+          "dense": 0.9781,
+          "steps": 3
         },
         {
           "scenario": "edge_case_03",
           "dense": 1.0,
-          "steps": 5
+          "steps": 4
         },
         {
           "scenario": "edge_case_04",
@@ -31,12 +31,12 @@
         {
           "scenario": "edge_case_05",
           "dense": 0.05,
-          "steps": 1
+          "steps": 2
         },
         {
           "scenario": "edge_case_06",
-          "dense": 1.0,
-          "steps": 3
+          "dense": 0.05,
+          "steps": 1
         },
         {
           "scenario": "edge_case_07",
@@ -46,42 +46,42 @@
         {
           "scenario": "edge_case_08",
           "dense": 0.05,
-          "steps": 1
-        },
-        {
-          "scenario": "edge_case_09",
-          "dense": 1.0,
           "steps": 3
         },
         {
-          "scenario": "edge_case_10",
-          "dense": 0.05,
-          "steps": 1
-        },
-        {
-          "scenario": "market_01",
+          "scenario": "edge_case_09",
           "dense": 0.05,
           "steps": 2
         },
         {
+          "scenario": "edge_case_10",
+          "dense": 0.05,
+          "steps": 3
+        },
+        {
+          "scenario": "market_01",
+          "dense": 0.05,
+          "steps": 1
+        },
+        {
           "scenario": "market_02",
-          "dense": 1.0,
-          "steps": 8
+          "dense": 0.05,
+          "steps": 1
         },
         {
           "scenario": "market_03",
-          "dense": 0.05,
-          "steps": 1
+          "dense": 1.0,
+          "steps": 5
         },
         {
           "scenario": "market_04",
-          "dense": 0.05,
-          "steps": 1
+          "dense": 1.0,
+          "steps": 4
         },
         {
           "scenario": "market_06",
-          "dense": 1.0,
-          "steps": 3
+          "dense": 0.05,
+          "steps": 1
         },
         {
           "scenario": "market_08",
@@ -91,12 +91,12 @@
         {
           "scenario": "marketable_limit_01",
           "dense": 0.05,
-          "steps": 3
+          "steps": 1
         },
         {
           "scenario": "marketable_limit_03",
-          "dense": 0.05,
-          "steps": 2
+          "dense": 1.0,
+          "steps": 4
         },
         {
           "scenario": "marketable_limit_04",
@@ -106,17 +106,17 @@
         {
           "scenario": "marketable_limit_05",
           "dense": 1.0,
-          "steps": 9
+          "steps": 3
         },
         {
           "scenario": "marketable_limit_07",
           "dense": 1.0,
-          "steps": 5
+          "steps": 4
         },
         {
           "scenario": "marketable_limit_08",
-          "dense": 0.05,
-          "steps": 3
+          "dense": 1.0,
+          "steps": 5
         },
         {
           "scenario": "marketable_limit_09",
@@ -125,33 +125,33 @@
         },
         {
           "scenario": "marketable_limit_10",
-          "dense": 0.05,
-          "steps": 2
+          "dense": 1.0,
+          "steps": 4
         },
         {
           "scenario": "midpoint_limit_01",
           "dense": 0.05,
-          "steps": 2
+          "steps": 1
         },
         {
           "scenario": "midpoint_limit_02",
-          "dense": 0.05,
-          "steps": 2
+          "dense": 1.0,
+          "steps": 4
         },
         {
           "scenario": "midpoint_limit_04",
-          "dense": 1.0,
-          "steps": 6
-        },
-        {
-          "scenario": "midpoint_limit_05",
           "dense": 0.05,
           "steps": 4
         },
         {
+          "scenario": "midpoint_limit_05",
+          "dense": 1.0,
+          "steps": 3
+        },
+        {
           "scenario": "midpoint_limit_06",
           "dense": 0.05,
-          "steps": 2
+          "steps": 1
         },
         {
           "scenario": "midpoint_limit_08",
@@ -160,23 +160,23 @@
         },
         {
           "scenario": "multi_exec_01",
-          "dense": 0.05,
-          "steps": 2
+          "dense": 1.0,
+          "steps": 6
         },
         {
           "scenario": "multi_exec_03",
-          "dense": 1.0,
+          "dense": 0.05,
           "steps": 3
         },
         {
           "scenario": "multi_exec_05",
-          "dense": 1.0,
-          "steps": 4
+          "dense": 0.05,
+          "steps": 1
         },
         {
           "scenario": "multi_exec_06",
-          "dense": 0.05,
-          "steps": 2
+          "dense": 1.0,
+          "steps": 3
         },
         {
           "scenario": "multi_exec_07",
@@ -185,8 +185,8 @@
         },
         {
           "scenario": "multi_exec_08",
-          "dense": 0.05,
-          "steps": 1
+          "dense": 1.0,
+          "steps": 4
         },
         {
           "scenario": "multi_exec_09",
@@ -195,53 +195,53 @@
         },
         {
           "scenario": "multi_exec_10",
-          "dense": 1.0,
-          "steps": 6
+          "dense": 0.05,
+          "steps": 2
         },
         {
           "scenario": "non_marketable_limit_01",
-          "dense": 1.0,
-          "steps": 6
-        },
-        {
-          "scenario": "non_marketable_limit_02",
-          "dense": 1.0,
-          "steps": 9
-        },
-        {
-          "scenario": "non_marketable_limit_04",
-          "dense": 1.0,
-          "steps": 8
-        },
-        {
-          "scenario": "non_marketable_limit_06",
-          "dense": 1.0,
-          "steps": 3
-        },
-        {
-          "scenario": "non_marketable_limit_08",
-          "dense": 1.0,
-          "steps": 4
-        },
-        {
-          "scenario": "non_marketable_limit_09",
-          "dense": 1.0,
-          "steps": 9
-        },
-        {
-          "scenario": "non_marketable_limit_10",
           "dense": 0.05,
           "steps": 1
         },
         {
+          "scenario": "non_marketable_limit_02",
+          "dense": 0.05,
+          "steps": 2
+        },
+        {
+          "scenario": "non_marketable_limit_04",
+          "dense": 1.0,
+          "steps": 5
+        },
+        {
+          "scenario": "non_marketable_limit_06",
+          "dense": 0.05,
+          "steps": 1
+        },
+        {
+          "scenario": "non_marketable_limit_08",
+          "dense": 0.05,
+          "steps": 1
+        },
+        {
+          "scenario": "non_marketable_limit_09",
+          "dense": 0.05,
+          "steps": 1
+        },
+        {
+          "scenario": "non_marketable_limit_10",
+          "dense": 1.0,
+          "steps": 4
+        },
+        {
           "scenario": "non_marketable_limit_12",
           "dense": 1.0,
-          "steps": 7
+          "steps": 5
         },
         {
           "scenario": "non_marketable_limit_13",
-          "dense": 0.0,
-          "steps": 12
+          "dense": 0.05,
+          "steps": 2
         },
         {
           "scenario": "non_marketable_limit_14",
@@ -250,23 +250,23 @@
         },
         {
           "scenario": "non_marketable_limit_15",
-          "dense": 1.0,
-          "steps": 3
+          "dense": 0.05,
+          "steps": 1
         },
         {
           "scenario": "realized_horizon_01",
-          "dense": 1.0,
+          "dense": 0.05,
           "steps": 5
         },
         {
           "scenario": "realized_horizon_03",
           "dense": 0.05,
-          "steps": 2
+          "steps": 4
         },
         {
           "scenario": "realized_horizon_04",
           "dense": 0.05,
-          "steps": 3
+          "steps": 1
         },
         {
           "scenario": "realized_horizon_05",
@@ -276,7 +276,7 @@
         {
           "scenario": "realized_horizon_07",
           "dense": 1.0,
-          "steps": 7
+          "steps": 6
         },
         {
           "scenario": "realized_horizon_09",
@@ -285,7 +285,7 @@
         },
         {
           "scenario": "realized_horizon_10",
-          "dense": 1.0,
+          "dense": 0.05,
           "steps": 4
         },
         {
@@ -295,43 +295,43 @@
         },
         {
           "scenario": "size_boundary_02",
-          "dense": 1.0,
-          "steps": 5
+          "dense": 0.05,
+          "steps": 1
         },
         {
           "scenario": "size_boundary_03",
-          "dense": 1.0,
-          "steps": 4
+          "dense": 0.05,
+          "steps": 1
         },
         {
           "scenario": "size_boundary_04",
-          "dense": 1.0,
-          "steps": 7
+          "dense": 0.05,
+          "steps": 3
         },
         {
           "scenario": "stop_01",
           "dense": 1.0,
-          "steps": 5
+          "steps": 8
         },
         {
           "scenario": "stop_04",
           "dense": 0.05,
-          "steps": 1
+          "steps": 3
         },
         {
           "scenario": "stop_05",
-          "dense": 1.0,
-          "steps": 3
+          "dense": 0.05,
+          "steps": 2
         },
         {
           "scenario": "stop_06",
           "dense": 0.05,
-          "steps": 1
+          "steps": 2
         },
         {
           "scenario": "stop_07",
-          "dense": 0.05,
-          "steps": 1
+          "dense": 1.0,
+          "steps": 10
         },
         {
           "scenario": "stop_08",
@@ -340,28 +340,28 @@
         },
         {
           "scenario": "stop_limit_01",
-          "dense": 0.05,
-          "steps": 5
+          "dense": 1.0,
+          "steps": 3
         },
         {
           "scenario": "stop_limit_03",
           "dense": 0.05,
-          "steps": 2
+          "steps": 1
         },
         {
           "scenario": "stop_limit_04",
-          "dense": 0.05,
-          "steps": 1
+          "dense": 1.0,
+          "steps": 7
         },
         {
           "scenario": "stop_limit_06",
           "dense": 0.05,
-          "steps": 1
+          "steps": 2
         },
         {
           "scenario": "stop_limit_07",
           "dense": 0.05,
-          "steps": 1
+          "steps": 2
         },
         {
           "scenario": "stop_limit_09",
@@ -371,7 +371,7 @@
         {
           "scenario": "stop_limit_10",
           "dense": 0.05,
-          "steps": 3
+          "steps": 2
         }
       ]
     },
@@ -379,15 +379,15 @@
       "policy": "ppo",
       "model": "checkpoints/ppo_tool.zip",
       "n": 72,
-      "mean_dense": 0.9991,
-      "std_dense": 0.0059,
+      "mean_dense": 0.9994,
+      "std_dense": 0.0054,
       "success_rate": 1.0,
-      "mean_steps": 3.21,
+      "mean_steps": 3.15,
       "per_scenario": [
         {
           "scenario": "edge_case_02",
-          "dense": 0.9781,
-          "steps": 11
+          "dense": 1.0,
+          "steps": 8
         },
         {
           "scenario": "edge_case_03",
@@ -427,7 +427,7 @@
         {
           "scenario": "edge_case_10",
           "dense": 0.954,
-          "steps": 10
+          "steps": 9
         },
         {
           "scenario": "market_01",

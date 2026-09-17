@@ -37,6 +37,10 @@ def eval_random(env_id: str, scenarios: list[str], max_steps: int, seed: int = 0
     for s in scenarios:
         env = gym.make(env_id, max_steps=max_steps)
         obs, _ = env.reset(seed=rng_seed, options={"scenario": s})
+        try:
+            env.action_space.seed(rng_seed)
+        except Exception:
+            pass
         done = False
         steps = 0
         info: dict = {}

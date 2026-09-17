@@ -3,15 +3,15 @@
   "split": "test",
   "max_steps": 12,
   "seed": 0,
-  "timestamp": "2026-09-17T23:39:52",
+  "timestamp": "2026-09-17T23:48:03",
   "policies": {
     "random": {
       "policy": "random",
       "n": 16,
-      "mean_dense": 0.0031,
-      "std_dense": 0.0121,
+      "mean_dense": 0.0063,
+      "std_dense": 0.0165,
       "success_rate": 0.0,
-      "mean_steps": 11.81,
+      "mean_steps": 10.75,
       "per_scenario": [
         {
           "scenario": "edge_case_01",
@@ -35,8 +35,8 @@
         },
         {
           "scenario": "midpoint_limit_07",
-          "dense": 0.05,
-          "steps": 9
+          "dense": 0.0,
+          "steps": 12
         },
         {
           "scenario": "midpoint_limit_09",
@@ -65,8 +65,8 @@
         },
         {
           "scenario": "non_marketable_limit_07",
-          "dense": 0.0,
-          "steps": 12
+          "dense": 0.05,
+          "steps": 2
         },
         {
           "scenario": "realized_horizon_02",
@@ -90,8 +90,8 @@
         },
         {
           "scenario": "stop_limit_08",
-          "dense": 0.0,
-          "steps": 12
+          "dense": 0.05,
+          "steps": 2
         }
       ]
     },

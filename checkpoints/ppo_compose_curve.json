@@ -2,9 +2,9 @@
   {
     "eval_idx": 0,
     "timesteps": 10000,
-    "mean_reward": 0.028,
-    "std_reward": 0.066,
-    "mean_len": 1.4
+    "mean_reward": 0.05,
+    "std_reward": 0.0,
+    "mean_len": 1.0
   },
   {
     "eval_idx": 1,

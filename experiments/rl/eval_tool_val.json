@@ -3,35 +3,35 @@
   "split": "val",
   "max_steps": 12,
   "seed": 0,
-  "timestamp": "2026-09-17T23:40:20",
+  "timestamp": "2026-09-17T23:47:58",
   "policies": {
     "random": {
       "policy": "random",
       "n": 12,
-      "mean_dense": 0.4458,
-      "std_dense": 0.4684,
-      "success_rate": 0.4167,
+      "mean_dense": 0.2875,
+      "std_dense": 0.4114,
+      "success_rate": 0.25,
       "mean_steps": 2.33,
       "per_scenario": [
         {
           "scenario": "market_05",
           "dense": 1.0,
-          "steps": 4
+          "steps": 3
         },
         {
           "scenario": "market_07",
-          "dense": 0.05,
-          "steps": 2
+          "dense": 1.0,
+          "steps": 4
         },
         {
           "scenario": "market_10",
           "dense": 0.05,
-          "steps": 1
+          "steps": 2
         },
         {
           "scenario": "marketable_limit_02",
           "dense": 0.05,
-          "steps": 1
+          "steps": 2
         },
         {
           "scenario": "multi_exec_02",
@@ -45,33 +45,33 @@
         },
         {
           "scenario": "realized_horizon_06",
-          "dense": 1.0,
-          "steps": 4
+          "dense": 0.05,
+          "steps": 3
         },
         {
           "scenario": "realized_horizon_08",
-          "dense": 1.0,
-          "steps": 3
+          "dense": 0.05,
+          "steps": 2
         },
         {
           "scenario": "size_boundary_05",
           "dense": 0.05,
-          "steps": 1
+          "steps": 3
         },
         {
           "scenario": "stop_10",
-          "dense": 1.0,
-          "steps": 5
+          "dense": 0.05,
+          "steps": 1
         },
         {
           "scenario": "stop_limit_02",
-          "dense": 1.0,
-          "steps": 4
+          "dense": 0.05,
+          "steps": 1
         },
         {
           "scenario": "stop_limit_05",
-          "dense": 0.05,
-          "steps": 1
+          "dense": 1.0,
+          "steps": 5
         }
       ]
     },
