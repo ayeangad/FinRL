@@ -51,8 +51,8 @@ def rollout(policy: SoftmaxToolPolicy, scenario_path: Path, max_steps: int = 12,
         rewards.append(float(r))
         # Heuristic: force submit once fully covered (keeps episodes short);
         # the LEARNED part is the tool ordering that reaches coverage fast.
-        obs = env._obs_dict()
-        if obs["coverage"] >= 1.0 and not done:
+        cov = float(env.legacy_state()["coverage"])
+        if cov >= 1.0 and not done:
             out2 = env.step(MASKED_SUBMIT)
             if len(out2) == 5:
                 _, r2, terminated, truncated, info = out2

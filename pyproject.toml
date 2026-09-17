@@ -16,9 +16,19 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest",
+    "gymnasium>=0.29",
 ]
 rl = [
-    "gymnasium",
+    "gymnasium>=0.29",
+    "stable-baselines3>=2.0",
+]
+sb3 = [
+    "gymnasium>=0.29",
+    "stable-baselines3>=2.0",
+]
+all_rl = [
+    "gymnasium>=0.29",
+    "stable-baselines3>=2.0",
 ]
 openai = [
     "openai",
