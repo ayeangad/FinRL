@@ -78,7 +78,8 @@ def eval_reinforce(env_id: str, scenarios: list[str], max_steps: int, checkpoint
     for i, s in enumerate(scenarios):
         env = gym.make(env_id, max_steps=max_steps).unwrapped
         env.reset(s, seed=seed + i)
-        # Mirror train.py rollout: greedy tool choice + round-robin slots.
+        # Mirror train.py rollout: SAMPLED tool choice + round-robin slots
+        # (greedy collapses to always-classify; sampling matches training).
         order_ids = list(env._order_ids) or ["O1"]
         k = 0
         done = False
@@ -86,7 +87,7 @@ def eval_reinforce(env_id: str, scenarios: list[str], max_steps: int, checkpoint
         info: dict = {}
         while not done and steps < max_steps:
             f = env.observation_features()
-            a = pol.greedy(f)
+            a, _ = pol.sample(f)
             oid = order_ids[k % len(order_ids)]
             _, r, term, trunc, info = env.step(a, order_id=oid)
             done = bool(term or trunc)
