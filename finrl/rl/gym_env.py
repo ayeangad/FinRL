@@ -96,7 +96,9 @@ _ORDER_TYPE_INDEX = {
 
 def _order_features(order, max_qty: float = 10000.0) -> list[float]:
     """Encode one order into ORDER_FEATURE_DIM floats in [0, 1]."""
-    side = 1.0 if str(getattr(order, "side", "buy")).lower() == "buy" else 0.0
+    side_raw = getattr(order, "side", "buy")
+    side_val = getattr(side_raw, "value", str(side_raw))
+    side = 1.0 if str(side_val).lower() == "buy" else 0.0
     otype = getattr(order, "order_type", None)
     t_idx = _ORDER_TYPE_INDEX.get(otype, -1)
     onehot = [0.0, 0.0, 0.0, 0.0]
